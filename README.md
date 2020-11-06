@@ -1,3 +1,5 @@
+Group 8
+
 This document details the protocol for interacting with the NewBank server.  
 
 A customer enters the command below and sees the messages returned 
