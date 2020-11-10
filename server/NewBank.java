@@ -6,6 +6,9 @@ public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private static final String SUCCESS = "SUCCESS";
+	private static final String FAIL = "FAIL";
+	private static final String NEWACCOUNT = "NEWACCOUNT";
 	
 	private NewBank() {
 		customers = new HashMap<>();
@@ -40,18 +43,47 @@ public class NewBank {
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
 		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
-			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-			case "Secret" : return showMyAccounts(customer);
-			default : return "FAIL";
-			//JI branch with all my amazing code changes
+			if(request.contains(NEWACCOUNT))
+			{
+				return addNewAccount(customer, request);
+			}
+
+			if(request.equals("SHOWMYACCOUNTS"))
+			{
+				return showMyAccounts(customer);
 			}
 		}
-		return "FAIL";
+		return FAIL;
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
+	}
+
+	private String addNewAccount(CustomerID customer, String commandWithAccountName)
+	{
+		var myCurrentCustomer = customers.get(customer.getKey());
+		//validate command, it must be NEWACCOUNT <Name>
+		var remainingString = commandWithAccountName.replace(NEWACCOUNT, "");
+		//check the length of the remaining String passed in breaks the limit
+		if (remainingString.length()>10)
+		{
+			return FAIL;
+		}
+
+		//check name on account doesnt already exist
+		var accounts = customers.get(customer.getKey()).getAccounts();
+		for (Account acc:accounts
+			 ) {
+			if(acc.getAccountName().equals(remainingString))
+			{
+				return FAIL;
+			}
+		}
+		Account theNewAccount = new Account(remainingString, 0);
+		myCurrentCustomer.addAccount(theNewAccount);
+
+		return SUCCESS;
 	}
 
 }
