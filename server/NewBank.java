@@ -42,7 +42,9 @@ public class NewBank {
 		if(customers.containsKey(customer.getKey())) {
 			switch(request) {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+			case "Secret" : return showMyAccounts(customer);
 			default : return "FAIL";
+			//JI branch with all my amazing code changes
 			}
 		}
 		return "FAIL";
