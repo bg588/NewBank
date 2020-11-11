@@ -1,7 +1,9 @@
 package server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class NewBank {
 	
@@ -43,10 +45,11 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
+		List<String> splitRequest = Arrays.asList(request.split(" "));
 		if(customers.containsKey(customer.getKey())) {
-			if(request.contains(NEWACCOUNT))
+			if(splitRequest.get(0).contains(NEWACCOUNT))
 			{
-				return addNewAccount(customer, request);
+				return addNewAccount(customer, splitRequest);
 			}
 
 			if(request.equals("SHOWMYACCOUNTS"))
@@ -61,13 +64,22 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
-	private String addNewAccount(CustomerID customer, String commandWithAccountName)
+
+	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
+	private String addNewAccount(CustomerID customer, List<String> commandWithAccountName)
 	{
 		Customer myCurrentCustomer = customers.get(customer.getKey());
-		//validate command, it must be NEWACCOUNT <Name>
-		String remainingString = commandWithAccountName.replace(NEWACCOUNT, "");
+		//flatten the list after the first split
+		var flattenlist = new String();
+		for (String value :
+				commandWithAccountName) {
+			if(value.equals(NEWACCOUNT)){
+				continue;
+			}
+			flattenlist += value;
+		}
 		//check the length of the remaining String passed in breaks the limit
-		if (remainingString.length()>10)
+		if (flattenlist.length()>10 || flattenlist.isEmpty() || flattenlist.isBlank())
 		{
 			return FAIL;
 		}
@@ -76,12 +88,12 @@ public class NewBank {
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 		for (Account acc:accounts
 			 ) {
-			if(acc.getAccountName().equals(remainingString))
+			if(acc.getAccountName().equals(flattenlist))
 			{
 				return FAIL;
 			}
 		}
-		Account theNewAccount = new Account(remainingString, 0);
+		Account theNewAccount = new Account(flattenlist, 0);
 		myCurrentCustomer.addAccount(theNewAccount);
 
 		return SUCCESS;
