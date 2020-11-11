@@ -1,5 +1,6 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NewBank {
@@ -62,9 +63,9 @@ public class NewBank {
 
 	private String addNewAccount(CustomerID customer, String commandWithAccountName)
 	{
-		var myCurrentCustomer = customers.get(customer.getKey());
+		Customer myCurrentCustomer = customers.get(customer.getKey());
 		//validate command, it must be NEWACCOUNT <Name>
-		var remainingString = commandWithAccountName.replace(NEWACCOUNT, "");
+		String remainingString = commandWithAccountName.replace(NEWACCOUNT, "");
 		//check the length of the remaining String passed in breaks the limit
 		if (remainingString.length()>10)
 		{
@@ -72,7 +73,7 @@ public class NewBank {
 		}
 
 		//check name on account doesnt already exist
-		var accounts = customers.get(customer.getKey()).getAccounts();
+		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 		for (Account acc:accounts
 			 ) {
 			if(acc.getAccountName().equals(remainingString))
