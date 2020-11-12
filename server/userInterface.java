@@ -14,8 +14,8 @@ public class userInterface extends Thread {
     private PrintWriter out;
 
     public userInterface(Socket s) throws IOException {
-        this.in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        this.out = new PrintWriter(s.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        out = new PrintWriter(s.getOutputStream(), true);
     }
 
     public void printMenu() {
@@ -36,11 +36,38 @@ public class userInterface extends Thread {
     }
 
     public String getMenuOption() {
+
+
         try {
-            Integer var1 = this.in.read();
+            String myOption = in.readLine();
+            //out.println("My Option is (in try) " +  myOption);
+            int newOption = Integer.parseInt(myOption);
+            switch (newOption) {
+                case 1:
+                    //return NEWACCOUNT
+                    break;
+                case 2:
+                    out.println("Show accounts");
+                    return "SHOWMYACCOUNTS";
+                case 3:
+                    //run pay code
+                    break;
+                case 4:
+                    //Move money code
+                    break;
+                default:
+                    return "";
+
+            }
+            out.println(myOption);
         } catch (IOException var2) {
+
         }
 
+
         return null;
+    }
+
+    private void parseInt(String myOption) {
     }
 }
