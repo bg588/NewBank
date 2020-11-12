@@ -63,7 +63,8 @@ public class userInterface extends Thread {
                         out.println("Please enter a person/company to pay");
                         String payee = in.readLine();
                         out.println("Please enter an amount");
-                        int amountToPay = in.read();
+                        String pay = in.readLine();
+                        int amountToPay = Integer.parseInt(pay);
                         out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
                         return "PAY " + payee + " " + amountToPay;
                     case 4:
