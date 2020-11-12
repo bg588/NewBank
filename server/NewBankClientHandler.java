@@ -37,8 +37,9 @@ public class NewBankClientHandler extends Thread{
 			// if the user is authenticated then get requests from the user and process them 
 			if(customer != null) {
 
-				ui.printMenu();
+
 				while(true) {
+					ui.printMenu();
 					String request = ui.getMenuOption();
 					System.out.println("Request from " + customer.getKey());
 					String response = bank.processRequest(customer, request);

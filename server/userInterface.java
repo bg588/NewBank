@@ -37,37 +37,65 @@ public class userInterface extends Thread {
 
     public String getMenuOption() {
 
+        boolean menuChoose = false;
+        while (menuChoose == false) {
+            try {
+                menuChoose = true;
+                String myOption = in.readLine();
+                //out.println("My Option is (in try) " +  myOption);
+                int newOption = Integer.parseInt(myOption);
+                switch (newOption) {
+                    case 1:
+                        out.println();
+                        out.println("Creating a new account");
+                        out.println("Please enter an account name");
+                        String accountName = in.readLine();
+                        out.println("NEWACCOUNT " + accountName);//test print so you can see what's being returned - to remove
+                        return "NEWACCOUNT " + accountName;
 
-        try {
-            String myOption = in.readLine();
-            //out.println("My Option is (in try) " +  myOption);
-            int newOption = Integer.parseInt(myOption);
-            switch (newOption) {
-                case 1:
-                    //return NEWACCOUNT
-                    break;
-                case 2:
-                    out.println("Show accounts");
-                    return "SHOWMYACCOUNTS";
-                case 3:
-                    //run pay code
-                    break;
-                case 4:
-                    //Move money code
-                    break;
-                default:
-                    return "";
+                    case 2:
+                        out.println();
+                        out.println("Showing accounts");
+                        return "SHOWMYACCOUNTS";
+                    case 3:
+                        out.println();
+                        out.println("Pay someone");
+                        out.println("Please enter a person/company to pay");
+                        String payee = in.readLine();
+                        out.println("Please enter an amount");
+                        int amountToPay = in.read();
+                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
+                        return "PAY " + payee + " " + amountToPay;
+                    case 4:
+                        out.println();
+                        out.println("Move money between accounts");
+                        out.println("Please enter an amount to move");
+                        String amount = in.readLine();
+                        int amountToMove = Integer.parseInt(amount);
+                        out.println("Transfer from which account?");
+                        String transferFrom = in.readLine();
+                        //String transferOut = in.readLine();
+                        out.println("Transfer to which account?");
+                        String transferTo = in.readLine();
+                        //out.println(transferOut);
+                        out.println("MOVE " + amountToMove + " " + transferFrom + " " + transferTo);//test print so you can see what's being returned - to remove
+                        return "MOVE " + amountToMove + " " +  transferFrom+ " " + transferTo;
 
+                    default:
+                        out.println("Invalid choice, please choose 1 - 4");
+                        menuChoose = false;
+                }
+                //out.println(myOption);
+            } catch (Exception e) {
+                out.println(e.getMessage());
+                out.println("Invalid choice, please choose 1 - 4");
+                menuChoose = false;
             }
-            out.println(myOption);
-        } catch (IOException var2) {
+
+
 
         }
-
-
         return null;
     }
 
-    private void parseInt(String myOption) {
-    }
 }
