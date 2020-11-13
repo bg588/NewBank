@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class NewBankClientHandler extends Thread{
 	
@@ -36,15 +37,12 @@ public class NewBankClientHandler extends Thread{
 			CustomerID customer = bank.checkLogInDetails(userName, password);
 			// if the user is authenticated then get requests from the user and process them 
 			if(customer != null) {
-
-
 				while(true) {
 					ui.printMenu();
-					String request = ui.getMenuOption();
+					ArrayList<String> request = ui.getMenuOption();
 					System.out.println("Request from " + customer.getKey());
 					String response = bank.processRequest(customer, request);
 					out.println(response);
-
 				}
 			}
 			else {

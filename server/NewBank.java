@@ -11,10 +11,7 @@ public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
-	private static final String SUCCESS = "SUCCESS";
-	private static final String FAIL = "FAIL";
-	private static final String NEWACCOUNT = "NEWACCOUNT";
-	private static final String PAY = "PAY";
+
 
 	private NewBank() {
 		customers = new HashMap<>();
@@ -47,24 +44,23 @@ public class NewBank {
 	}
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customer, String request) {
-		List<String> splitRequest = Arrays.asList(request.split(" "));
+	public synchronized String processRequest(CustomerID customer, ArrayList<String> request) {
 		if(customers.containsKey(customer.getKey())) {
-			if(splitRequest.get(0).contains(NEWACCOUNT))
+			if(request.get(0).contains(ProtocolsAndResponses.Protocols.NEWACCOUNT))
 			{
-				return addNewAccount(customer, splitRequest);
+				return addNewAccount(customer, request);
 			}
-			if(splitRequest.get(0).contains(PAY))
+			if(request.get(0).contains(ProtocolsAndResponses.Protocols.PAY))
 			{
-				return payPersonOrCompanyAnAmount(customer, splitRequest);
+				return payPersonOrCompanyAnAmount(customer, request);
 			}
 
-			if(request.equals("SHOWMYACCOUNTS"))
+			if(request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS))
 			{
 				return showMyAccounts(customer);
 			}
 		}
-		return FAIL;
+		return ProtocolsAndResponses.Responses.FAIL;
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
@@ -80,7 +76,7 @@ public class NewBank {
 		var flattenlist = new String();
 		for (String value :
 				commandWithAccountName) {
-			if(value.equals(NEWACCOUNT)){
+			if(value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)){
 				continue;
 			}
 			flattenlist += value;
@@ -88,20 +84,20 @@ public class NewBank {
 		//check the length of the remaining String passed in breaks the limit
 		if (flattenlist.length()>10 || flattenlist.isEmpty() || flattenlist.isBlank())
 		{
-			return FAIL;
+			return ProtocolsAndResponses.Responses.FAIL;
 		}
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 		for (Account acc:accounts
 			 ) {
 			if(acc.getAccountName().equals(flattenlist))
 			{
-				return FAIL;
+				return ProtocolsAndResponses.Responses.FAIL;
 			}
 		}
 		Account theNewAccount = new Account(flattenlist, 0);
 		myCurrentCustomer.addAccount(theNewAccount);
 
-		return SUCCESS;
+		return ProtocolsAndResponses.Responses.SUCCESS;
 	}
 
 	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount)
@@ -113,10 +109,10 @@ public class NewBank {
 			return "Wrong Amount of args";
 		}
         //first input in the split array is the command
-		if(!commandWithPayeeAndAmount.get(0).equals(PAY))
+		if(!commandWithPayeeAndAmount.get(0).equals(ProtocolsAndResponses.Protocols.PAY))
 		{
 			//Somehow the wrong command came in here
-			return FAIL;
+			return ProtocolsAndResponses.Responses.FAIL;
 		}
 		//next input in the split array must be payee
 		//this code will break once we have a protocol that can create customer names with spaces in them
@@ -166,13 +162,13 @@ public class NewBank {
 						//yay this account has enough - reduce my balance and pay the person
 						account.reduceBalance(amountToPay);
 						PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
-						return SUCCESS;
+						return ProtocolsAndResponses.Responses.SUCCESS;
 					}
 				}
 				break;
 			}
 		}
-		return FAIL;
+		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
 	private static double roundDouble(double d, int places) {
