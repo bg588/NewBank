@@ -1,5 +1,7 @@
 package server;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,7 +56,7 @@ public class NewBank {
 			}
 			if(splitRequest.get(0).contains(PAY))
 			{
-				return payPersonOrCompanyAnAmmount(customer, splitRequest);
+				return payPersonOrCompanyAnAmount(customer, splitRequest);
 			}
 
 			if(request.equals("SHOWMYACCOUNTS"))
@@ -102,63 +104,81 @@ public class NewBank {
 		return SUCCESS;
 	}
 
-	private String payPersonOrCompanyAnAmmount(CustomerID customer, List<String> commandWithPayeeAndAmmount)
+	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount)
 	{
 		var myName = customer.getKey();
-        if(commandWithPayeeAndAmmount.size() !=3)
+        if(commandWithPayeeAndAmount.size() !=3)
 		{
-			//no the correct amount of args
+			//not the correct amount of args
 			return "Wrong Amount of args";
 		}
-		if(!commandWithPayeeAndAmmount.get(0).equals(PAY))
+        //first input in the split array is the command
+		if(!commandWithPayeeAndAmount.get(0).equals(PAY))
 		{
 			//Somehow the wrong command came in here
 			return FAIL;
 		}
-		//next input must be a person or company name
-		var personOrCompanyToPay = commandWithPayeeAndAmmount.get(1);
-		double ammountToPay = 0.0;
+		//next input in the split array must be payee
+		//this code will break once we have a protocol that can create customer names with spaces in them
+		// This must be future work as it will be a UI change to take the parameters in steps
+		var personOrCompanyToPay = commandWithPayeeAndAmount.get(1);
+		double amountToPay = 0.0;
 		try {
-			ammountToPay = Double.parseDouble(commandWithPayeeAndAmmount.get(2));
+			//next input in the split array must be the amount
+			//uses big decimal to keep to 2 decimal places
+			amountToPay = roundDouble(Double.parseDouble(commandWithPayeeAndAmount.get(2)), 2);
 		}
 		catch (NumberFormatException ex)
 		{
 			return "payable amount could not be converted to a valid number";
 		}
-		if(ammountToPay <=1)
+		if(amountToPay <=0.009)
 		{
-			//cannot pay someone less that 1 wtv currency
-			return "Cannot pay someone less than 1";
+			//cannot pay someone less that 0.01 wtv currency
+			return "Cannot pay someone less than 0.01";
 		}
-		if(personOrCompanyToPay.equals(myName))
+		if(personOrCompanyToPay.equalsIgnoreCase(myName))
 		{
 			//cannot pay myself
 			return "Cannot pay yourself";
 		}
+		//this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
 		for (String customerName: customers.keySet()
 			 ) {
-			if(personOrCompanyToPay.equals(customerName))
+			//when we reach the customer we want to pay
+			if(personOrCompanyToPay.equalsIgnoreCase(customerName))
 			{
-				//found the person we want to pay
-				//doesnt specify which account, by default we will pay the first account for the customer we find
+				//we pull out the customer object based on the name we matched above
 				var payee = customers.get(customerName);
+				//we get the customers accounts
 				ArrayList<Account> PayeeAccounts = payee.getAccounts();
 
+				//get the current users customer object
 				var me = customers.get(customer.getKey());
+				//get the current users list of accounts
 				var myAccounts = me.getAccounts();
+
+				//cycle through the user accounts to find one with enough money in it
 				for (Account account :
 						myAccounts) {
-					//As we dont specify which account we want to pay from, we check if we have the money to pay
-					if (account.getBalance() >= ammountToPay)
+					if (account.getBalance() >= amountToPay)
 					{
 						//yay this account has enough - reduce my balance and pay the person
-						account.reduceBalance(ammountToPay);
-						PayeeAccounts.get(0).addMoneyToAccount(ammountToPay);
+						account.reduceBalance(amountToPay);
+						PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
 						return SUCCESS;
 					}
 				}
+				break;
 			}
 		}
 		return FAIL;
+	}
+
+	private static double roundDouble(double d, int places) {
+
+		BigDecimal bigDecimal = new BigDecimal(Double.toString(d));
+		bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
+		return bigDecimal.doubleValue();
 	}
 }
