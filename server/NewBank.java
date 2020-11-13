@@ -12,7 +12,8 @@ public class NewBank {
 	private static final String SUCCESS = "SUCCESS";
 	private static final String FAIL = "FAIL";
 	private static final String NEWACCOUNT = "NEWACCOUNT";
-	
+	private static final String PAY = "PAY";
+
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
@@ -35,7 +36,7 @@ public class NewBank {
 	public static NewBank getBank() {
 		return bank;
 	}
-	
+
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
 		if(customers.containsKey(userName)) {
 			return new CustomerID(userName);
@@ -50,6 +51,10 @@ public class NewBank {
 			if(splitRequest.get(0).contains(NEWACCOUNT))
 			{
 				return addNewAccount(customer, splitRequest);
+			}
+			if(splitRequest.get(0).contains(PAY))
+			{
+				return payPersonOrCompanyAnAmmount(customer, splitRequest);
 			}
 
 			if(request.equals("SHOWMYACCOUNTS"))
@@ -97,4 +102,63 @@ public class NewBank {
 		return SUCCESS;
 	}
 
+	private String payPersonOrCompanyAnAmmount(CustomerID customer, List<String> commandWithPayeeAndAmmount)
+	{
+		var myName = customer.getKey();
+        if(commandWithPayeeAndAmmount.size() !=3)
+		{
+			//no the correct amount of args
+			return "Wrong Amount of args";
+		}
+		if(!commandWithPayeeAndAmmount.get(0).equals(PAY))
+		{
+			//Somehow the wrong command came in here
+			return FAIL;
+		}
+		//next input must be a person or company name
+		var personOrCompanyToPay = commandWithPayeeAndAmmount.get(1);
+		double ammountToPay = 0.0;
+		try {
+			ammountToPay = Double.parseDouble(commandWithPayeeAndAmmount.get(2));
+		}
+		catch (NumberFormatException ex)
+		{
+			return "payable amount could not be converted to a valid number";
+		}
+		if(ammountToPay <=1)
+		{
+			//cannot pay someone less that 1 wtv currency
+			return "Cannot pay someone less than 1";
+		}
+		if(personOrCompanyToPay.equals(myName))
+		{
+			//cannot pay myself
+			return "Cannot pay yourself";
+		}
+		for (String customerName: customers.keySet()
+			 ) {
+			if(personOrCompanyToPay.equals(customerName))
+			{
+				//found the person we want to pay
+				//doesnt specify which account, by default we will pay the first account for the customer we find
+				var payee = customers.get(customerName);
+				ArrayList<Account> PayeeAccounts = payee.getAccounts();
+
+				var me = customers.get(customer.getKey());
+				var myAccounts = me.getAccounts();
+				for (Account account :
+						myAccounts) {
+					//As we dont specify which account we want to pay from, we check if we have the money to pay
+					if (account.getBalance() >= ammountToPay)
+					{
+						//yay this account has enough - reduce my balance and pay the person
+						account.reduceBalance(ammountToPay);
+						PayeeAccounts.get(0).addMoneyToAccount(ammountToPay);
+						return SUCCESS;
+					}
+				}
+			}
+		}
+		return FAIL;
+	}
 }
