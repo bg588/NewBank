@@ -19,4 +19,19 @@ public class Account {
 		return (accountName + ": " + openingBalance);
 	}
 
+	public void addMoneyToAccount(double ammount)
+	{
+		openingBalance += ammount;
+	}
+
+	public void reduceBalance(double ammount)
+	{
+		openingBalance = openingBalance - ammount;
+	}
+
+	public Double getBalance()
+	{
+		return openingBalance;
+	}
+
 }
