@@ -11,7 +11,6 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 
-
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
@@ -77,11 +76,11 @@ public class NewBank {
 			flattenlist += value;
 		}
 		//check the length of the remaining String passed in breaks the limit
-		if (flattenlist.length()>10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
+		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
-		for (Account acc:accounts) {
+		for (Account acc : accounts) {
 			if (acc.getAccountName().equals(flattenlist)) {
 				return ProtocolsAndResponses.Responses.FAIL;
 			}
@@ -94,7 +93,7 @@ public class NewBank {
 
 	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
 		var myName = customer.getKey();
-        if (commandWithPayeeAndAmount.size() !=3) {
+        if (commandWithPayeeAndAmount.size() != 3) {
 			//not the correct amount of args
 			return "Wrong Amount of args";
 		}
@@ -116,7 +115,7 @@ public class NewBank {
 		catch (NumberFormatException ex) {
 			return "payable amount could not be converted to a valid number";
 		}
-		if(amountToPay <=0.009) {
+		if(amountToPay <= 0.009) {
 			//cannot pay someone less that 0.01 wtv currency
 			return "Cannot pay someone less than 0.01";
 		}
@@ -157,7 +156,7 @@ public class NewBank {
 	private String moveAnAmountFromOneAccountToAnother(CustomerID customer,
 													   List<String> commandWithAmountOriginAccountDestinationAccount) {
 
-		if (commandWithAmountOriginAccountDestinationAccount.size() !=4) {
+		if (commandWithAmountOriginAccountDestinationAccount.size() != 4) {
 			//not the correct amount of args
 			return "Wrong Amount of args";
 		}
@@ -176,7 +175,7 @@ public class NewBank {
 			return "payable amount could not be converted to a valid number";
 		}
 
-		if (amountToMove <=0.009) {
+		if (amountToMove <= 0.009) {
 			//cannot pay someone less that 0.01 wtv currency
 			return "Cannot pay someone less than 0.01";
 		}
