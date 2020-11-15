@@ -88,6 +88,7 @@ public class userInterface extends Thread {
                         out.println("Transfer to which account?");
                         String transferTo = in.readLine();
                         stringArrayList.add(transferTo);
+                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
 
                     default:

@@ -54,7 +54,10 @@ public class NewBank {
 			{
 				return payPersonOrCompanyAnAmount(customer, request);
 			}
-
+			if(request.get(0).contains(ProtocolsAndResponses.Protocols.MOVE))
+			{
+				return moveAnAmountFromOneAccountToAnother(customer, request);
+			}
 			if(request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS))
 			{
 				return showMyAccounts(customer);
@@ -170,6 +173,82 @@ public class NewBank {
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
+
+	//Based on Ioannis's PAY code
+	private String moveAnAmountFromOneAccountToAnother(CustomerID customer, List<String> commandWithAmountOriginAccountDestinationAccount)
+	{
+		//var myName = customer.getKey();
+		if(commandWithAmountOriginAccountDestinationAccount.size() !=4)
+		{
+			//not the correct amount of args
+			return "Wrong Amount of args";
+		}
+		//first input in the split array is the command
+		if(!commandWithAmountOriginAccountDestinationAccount.get(0).equals(ProtocolsAndResponses.Protocols.MOVE))
+		{
+			//Somehow the wrong command came in here
+			return ProtocolsAndResponses.Responses.FAIL;
+		}
+		//next input in the split array must be payee
+		//this code will break once we have a protocol that can create customer names with spaces in them
+		// This must be future work as it will be a UI change to take the parameters in steps
+
+		//next input must be two accounts that exists
+		var AccountsThatExistsForOrigin = commandWithAmountOriginAccountDestinationAccount.get(2);
+		var AccountsThatExistsForDestination = commandWithAmountOriginAccountDestinationAccount.get(3);
+		//System.out.println(AccountsThatExistsForOrigin);
+		//System.out.println(AccountsThatExistsForDestination);
+
+		double amountToMove = 0.0;
+		try {
+			//next input in the split array must be the amount
+			//uses big decimal to keep to 2 decimal places
+			amountToMove = roundDouble(Double.parseDouble(commandWithAmountOriginAccountDestinationAccount.get(1)), 2);
+		}
+		catch (NumberFormatException ex)
+		{
+			return "payable amount could not be converted to a valid number";
+		}
+		if(amountToMove <=0.009)
+		{
+			//cannot pay someone less that 0.01 wtv currency
+			return "Cannot pay someone less than 0.01";
+		}
+		if(AccountsThatExistsForOrigin.equals(AccountsThatExistsForDestination))
+		{
+			//cannot move between the same account
+			return "Cannot move between the same account";
+		}
+		var me = customers.get(customer.getKey());
+		//System.out.println(customers.get(customer.getKey()));
+		ArrayList<Account> allMyAccounts = me.getAccounts();
+		//System.out.println(me.getAccounts();
+
+		for (Account accOrigin:allMyAccounts)
+		{
+			//System.out.println(acc);
+			//when we can find the account we want to move from
+			if(AccountsThatExistsForOrigin.equals(accOrigin))
+			{
+				for (Account accDest : allMyAccounts) {
+					//when we can find the account we want to move to
+					if (AccountsThatExistsForDestination.equals(accDest)) {
+
+						if (accOrigin.getBalance() >= amountToMove) {
+							//this account has enough amount - reduce balance from originating account and move to destination account
+							accOrigin.reduceBalance(amountToMove);
+							accDest.addMoneyToAccount(amountToMove);
+							return ProtocolsAndResponses.Responses.SUCCESS;
+						}
+					}
+				}
+			}
+
+		}
+		return ProtocolsAndResponses.Responses.FAIL;
+	}
+
+
 
 	private static double roundDouble(double d, int places) {
 
