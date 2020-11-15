@@ -196,11 +196,11 @@ public class NewBank {
 
 		for (Account originAccount : allMyAccounts) {
 			// looping through all accounts and searching for intendedOriginAccountName
-			if (intendedOriginAccountName.equals(originAccount.getAccountName())) {
+			if (intendedOriginAccountName.equalsIgnoreCase(originAccount.getAccountName())) {
 				// intendedOriginAccountName is a real account, now check if intendedDestinationAccountName is real
 				for (Account destinationAccount : allMyAccounts) {
 					// looping through all accounts and searching for intendedDestinationAccountName
-					if (intendedDestinationAccountName.equals(destinationAccount.getAccountName())) {
+					if (intendedDestinationAccountName.equalsIgnoreCase(destinationAccount.getAccountName())) {
 						// Destination account exists - carry out transfer, subject to amount being available
 						if (originAccount.getBalance() >= amountToMove) {
 							// this account has enough
