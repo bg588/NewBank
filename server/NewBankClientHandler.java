@@ -12,13 +12,13 @@ public class NewBankClientHandler extends Thread{
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
-	private userInterface ui;
+	private UserInterface ui;
 	
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
-		ui = new userInterface(s);
+		ui = new UserInterface(s);
 	}
 	
 	public void run() {

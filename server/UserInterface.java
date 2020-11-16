@@ -1,5 +1,3 @@
-
-
 package server;
 
 import java.io.BufferedReader;
@@ -9,12 +7,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class userInterface extends Thread {
-    private NewBank bank = NewBank.getBank();
+public class UserInterface extends Thread {
     private BufferedReader in;
     private PrintWriter out;
 
-    public userInterface(Socket s) throws IOException {
+    public UserInterface(Socket s) throws IOException {
         in = new BufferedReader(new InputStreamReader(s.getInputStream()));
         out = new PrintWriter(s.getOutputStream(), true);
     }
@@ -41,7 +38,6 @@ public class userInterface extends Thread {
         boolean menuChoose = false;
         while (menuChoose == false) {
             try {
-                menuChoose = true;
                 String myOption = in.readLine();
                 //out.println("My Option is (in try) " +  myOption);
                 int newOption = Integer.parseInt(myOption);
@@ -55,7 +51,6 @@ public class userInterface extends Thread {
                         stringArrayList.add(ProtocolsAndResponses.Protocols.NEWACCOUNT);
                         stringArrayList.add(accountName);
                         return stringArrayList;
-
                     case 2:
                         out.println();
                         out.println("Showing accounts");
@@ -88,8 +83,8 @@ public class userInterface extends Thread {
                         out.println("Transfer to which account?");
                         String transferTo = in.readLine();
                         stringArrayList.add(transferTo);
+                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
-
                     default:
                         out.println("Invalid choice, please choose 1 - 4");
                         menuChoose = false;
@@ -100,11 +95,7 @@ public class userInterface extends Thread {
                 out.println("Invalid choice, please choose 1 - 4");
                 menuChoose = false;
             }
-
-
-
         }
         return null;
     }
-
 }
