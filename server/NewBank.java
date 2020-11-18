@@ -236,7 +236,6 @@ public class NewBank {
 							// reduce amount from origin account and increase balance in destination account
 							originAccount.reduceBalance(amountToMove);
 							destinationAccount.addMoneyToAccount(amountToMove);
-							
 							return "SUCCESS\n"+intendedOriginAccountName+" "+originAccount.getBalance().toString()+
 									" "+intendedDestinationAccountName+" "+destinationAccount.getBalance().toString();
 						}
