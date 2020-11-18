@@ -27,10 +27,11 @@ public class UserInterface extends Thread {
         this.out.println("*  2) Show my accounts             *");
         this.out.println("*  3) Pay someone                  *");
         this.out.println("*  4) Move money between accounts  *");
+        this.out.println("*  5) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 4)");
+        this.out.println("Enter an option (1 - 5)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -85,14 +86,18 @@ public class UserInterface extends Thread {
                         stringArrayList.add(transferTo);
                         out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
+                    case 5:
+                        out.println("Thank you, and goodbye.");
+                        // when this command arrives at client, client will gracefully exit :
+                        out.println("DisconnectClient");
                     default:
-                        out.println("Invalid choice, please choose 1 - 4");
+                        out.println("Invalid choice, please choose 1 - 5");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 4");
+                out.println("Invalid choice, please choose 1 - 5");
                 menuChoose = false;
             }
         }
