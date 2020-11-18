@@ -19,14 +19,17 @@ public class NewBank {
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.setPassword("password");
 		customers.put("Bhagy", bhagy);
 		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
+		christina.setPassword("password");
 		customers.put("Christina", christina);
 		
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
+		john.setPassword("password");
 		customers.put("John", john);
 	}
 	
@@ -35,9 +38,35 @@ public class NewBank {
 	}
 
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if(customers.containsKey(userName)) {
-			return new CustomerID(userName);
+		if (customers.containsKey(userName)) {
+			// create CustomerID as username exists
+			CustomerID customerID = new CustomerID(userName);
+			// create a local customer which represents the valid customer
+			// customer holds password etc. customerID is what is passed back to NewBankClientHandler
+			Customer customer = customers.get(userName);
+			if (customer.isLocked()) {
+				//check whether account is locked, if it is then set customerID to locked and return it
+				customerID.lock();
+				return customerID;
+			}
+			if (customer.verifyPassword(password)) {
+				// user and password are correct
+				// reset password attempts remaining for customer
+				customer.resetPasswordAttemptsRemaining();
+				// password matches, set CustomerID as authenticated
+				customerID.setAuthenticated(true);
+				// return customerID to allow login
+				return customerID;
+			}
+			// user exists, password does not match - increment failedPasswordAttempt counter on customer
+			customer.failedPasswordAttempt();
+			// set customerID authenticated to false
+			customerID.setAuthenticated(false);
+			// set attempts remaining on customerID to be passed back to NewBankClientHandler
+			customerID.setPasswordAttemptsRemaining(customer.getPasswordAttemptsRemaining());
+			return customerID;
 		}
+		// username does not exist, return null CustomerID
 		return null;
 	}
 
