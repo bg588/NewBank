@@ -1,5 +1,6 @@
 package server;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -236,14 +237,25 @@ public class NewBank {
 							// reduce amount from origin account and increase balance in destination account
 							originAccount.reduceBalance(amountToMove);
 							destinationAccount.addMoneyToAccount(amountToMove);
-							return "SUCCESS\n"+intendedOriginAccountName+" "+originAccount.getBalance().toString()+
-									" "+intendedDestinationAccountName+" "+destinationAccount.getBalance().toString();
+							return "SUCCESS\n" + "New Balance: "+intendedOriginAccountName + " " + originAccount.getBalance().toString() +
+									" " + intendedDestinationAccountName + " " + destinationAccount.getBalance().toString();
 						}
 					}
 				}
 			}
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+
+		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
+		for (Account myAccount : allMyAccounts) {
+			listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+		}
+		StringBuffer sb = new StringBuffer();
+		for(Account eachItemInArray:listOfMyAccountsAndBalance){
+			sb.append(eachItemInArray);
+			sb.append(" ");
+		}
+		String balance = sb.toString();
+		return "FAIL\n" + "Balance: "+balance;
 	}
 
 	private static double roundDouble(double d, int places) {
