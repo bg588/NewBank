@@ -41,7 +41,7 @@ public class NewBankClientHandler extends Thread{
 				//customer exists, but account is locked
 				out.println("Your account has been locked. Please contact customer services");
 				//send this to disconnect client :
-				out.println("DisconnectClient");
+				out.println(ProtocolsAndResponses.Responses.EXIT);
 			} else if (customerID != null && !customerID.isAuthenticated()) {
 				// customer exists, but password does not match
 				out.println("Password does not match");
@@ -49,7 +49,7 @@ public class NewBankClientHandler extends Thread{
 					out.println("You have exceeded you maximum attempts and your account is now locked.");
 					out.println("Please contact customer services");
 					//Exceed max login attempts. Print DisconnectClient to stop ExampleClient.
-					out.println("DisconnectClient");
+					out.println(ProtocolsAndResponses.Responses.EXIT);
 				} else {
 					out.println("Please try again, you have " + customerID.getPasswordAttemptsRemaining() + " attempt(s) remaining");
 					run();
@@ -70,7 +70,7 @@ public class NewBankClientHandler extends Thread{
 				loginAttemptsRemaining--;
 				if (loginAttemptsRemaining == 0) {
 					//Exceed max login attempts. Print DisconnectClient to stop ExampleClient.
-					out.println("DisconnectClient");
+					out.println(ProtocolsAndResponses.Responses.EXIT);
 				} else {
 					out.println("You have " + (loginAttemptsRemaining) + " username attempt(s) remaining.");
 					run();

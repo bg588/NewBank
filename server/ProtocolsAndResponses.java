@@ -5,6 +5,7 @@ public class ProtocolsAndResponses {
         {
             public static final String SUCCESS = "SUCCESS";
             public static final String FAIL = "FAIL";
+            public static final String EXIT = "DisconnectClient";
         }
 
         public static class Protocols{
@@ -12,5 +13,6 @@ public class ProtocolsAndResponses {
             public static final String SHOWMYACCOUNTS = "SHOWMYACCOUNTS";
             public static final String PAY = "PAY";
             public static final String MOVE = "MOVE";
+            public static final String EXIT = "EXIT";
         }
 }

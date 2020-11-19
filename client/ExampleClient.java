@@ -1,5 +1,7 @@
 package client;
 
+import server.ProtocolsAndResponses;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +27,7 @@ public class ExampleClient extends Thread{
 				try {
 					while(true) {
 						String response = bankServerIn.readLine();
-						if (response.equals("DisconnectClient")) {
+						if (response.equals(ProtocolsAndResponses.Responses.EXIT)) {
 							System.out.println("Disconnecting you from the server.");
 							System.exit(0);
 						}

@@ -87,9 +87,9 @@ public class UserInterface extends Thread {
                         out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 5:
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
                         out.println("Thank you, and goodbye.");
-                        // when this command arrives at client, client will gracefully exit :
-                        out.println("DisconnectClient");
+                        return stringArrayList;
                     default:
                         out.println("Invalid choice, please choose 1 - 5");
                         menuChoose = false;
