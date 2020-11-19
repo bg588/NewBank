@@ -57,6 +57,7 @@ public class NewBankClientHandler extends Thread{
 			} else if (customerID != null && customerID.isAuthenticated()) {
 				// if the user is authenticated then get requests from the user and process them
 				//customer exists, password matches
+				out.println("You have successfully logged in, welcome...");
 				while(true) {
 					ui.printMenu();
 					ArrayList<String> request = ui.getMenuOption();
