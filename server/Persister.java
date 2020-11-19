@@ -17,7 +17,8 @@ import java.util.Scanner;
 public class Persister {
 
     private HashMap<String, Customer> data;
-    // this points to file location on classpath ie out/production/newbank/data.csv so we can use on any platform
+    // this points to file location on classpath ie out/production/newbank/data.csv
+    // so we should be able to use on any platform (ie PC, Mac, Linux etc)
     private final String fileLocation;
 
     public Persister() {
@@ -94,7 +95,7 @@ public class Persister {
             scanner.close();
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Exception in getPersistedData() : " + e);
         }
         return data;
     }
