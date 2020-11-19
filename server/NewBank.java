@@ -173,13 +173,26 @@ public class NewBank {
 						//yay this account has enough - reduce my balance and pay the person
 						account.reduceBalance(amountToPay);
 						PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
-						return ProtocolsAndResponses.Responses.SUCCESS;
+						return "SUCCESS\n" + "New Balance: "+account.getAccountName()+" "+account.getBalance().toString();
 					}
 				}
 				break;
 			}
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+		Customer me = customers.get(customer.getKey());
+		ArrayList<Account> allMyAccounts = me.getAccounts();
+
+		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
+		for (Account myAccount : allMyAccounts) {
+			listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+		}
+		StringBuffer sb = new StringBuffer();
+		for(Account eachItemInArray:listOfMyAccountsAndBalance){
+			sb.append(eachItemInArray);
+			sb.append(" ");
+		}
+		String balance = sb.toString();
+		return "FAIL\n" + "Balance: "+balance;
 	}
 
 	//Based on Ioannis's PAY code

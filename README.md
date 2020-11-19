@@ -25,3 +25,9 @@ Balance: Checking 250.0 Savings 0.0
 PAY <Person/Company> <Ammount>
 e.g. PAY John 100
 Returns SUCCESS or FAIL
+Plus AccountUsed Balance 
+e.g. original balance Checking 250.0 
+In case of SUCCESS)
+New Balance: Checking 150.0
+In case of FAIL)
+Balance: Checking 250.0
