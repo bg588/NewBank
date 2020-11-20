@@ -37,6 +37,10 @@ public class Customer {
 		password.setPassword(inputPassword);
 	}
 
+	public Password getPassword() {
+		return password;
+	}
+
 	public boolean verifyPassword(String inputPassword) {
 		return password.getPassword().equals(inputPassword);
 	}

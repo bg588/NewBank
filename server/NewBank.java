@@ -11,23 +11,32 @@ public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private Persister persister;
 
 	private NewBank() {
 		customers = new HashMap<>();
-		addTestData();
+		persister = new Persister();
+		if (persister.fileExists()) {
+			// a persisted file exists, so load our customer data from that
+			customers = persister.getPersistedData();
+		} else {
+			// no persisted file exists, so go with the test data that we were provided
+			// this could potentially be moved later to the Persister to tidy things up
+			addTestData();
+		}
 	}
-	
+
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
 		customers.put("Bhagy", bhagy);
-		
+
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("password");
 		customers.put("Christina", christina);
-		
+
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		john.setPassword("password");
@@ -85,6 +94,9 @@ public class NewBank {
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return showMyAccounts(customer);
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
+				return exit();
 			}
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
@@ -269,6 +281,13 @@ public class NewBank {
 		}
 		String balance = sb.toString();
 		return "FAIL\n" + "Balance: "+balance;
+	}
+
+	private String exit() {
+		// save down data
+		persister.setPersistedData(customers);
+		// return exit
+		return ProtocolsAndResponses.Responses.EXIT;
 	}
 
 	private static double roundDouble(double d, int places) {
