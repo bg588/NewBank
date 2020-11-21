@@ -24,14 +24,15 @@ public class UserInterface extends Thread {
         this.out.println("*      Please choose from          *");
         this.out.println("*                                  *");
         this.out.println("*  1) Create a new account         *");
-        this.out.println("*  2) Show my accounts             *");
-        this.out.println("*  3) Pay someone                  *");
-        this.out.println("*  4) Move money between accounts  *");
-        this.out.println("*  5) Exit                         *");
+        this.out.println("*  2) Deposit cash                 *");
+        this.out.println("*  3) Show my accounts             *");
+        this.out.println("*  4) Pay someone                  *");
+        this.out.println("*  5) Move money between accounts  *");
+        this.out.println("*  6) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 5)");
+        this.out.println("Enter an option (1 - 6)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -53,15 +54,30 @@ public class UserInterface extends Thread {
                         out.println("Please enter an initial deposit amount");
                         String amount = in.readLine();
                         stringArrayList.add(amount);
-                        int depositAmount = Integer.parseInt(amount);
+//                        int depositAmount = Integer.parseInt(amount);
 //                        out.println("NEWACCOUNT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
+
                     case 2:
+                        out.println();
+                        out.println("Deposit cash");
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.DEPOSIT);
+                        out.println("Please enter an account name");
+                        String depositAccountName = in.readLine();
+                        stringArrayList.add(depositAccountName);
+                        out.println("Please enter an amount to deposit");
+                        String depositAmount = in.readLine();
+                        stringArrayList.add(depositAmount);
+//                        int depositAmount = Integer.parseInt(amount);
+//                        out.println("DEPOSIT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
+                        return stringArrayList;
+
+                    case 3:
                         out.println();
                         out.println("Showing accounts");
                         stringArrayList.add(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS);
                         return stringArrayList;
-                    case 3:
+                    case 4:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.PAY);
                         out.println();
                         out.println("Pay someone");
@@ -74,7 +90,7 @@ public class UserInterface extends Thread {
                         int amountToPay = Integer.parseInt(pay);
 //                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
                         return stringArrayList;
-                    case 4:
+                    case 5:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.MOVE);
                         out.println();
                         out.println("Move money between accounts");
@@ -90,18 +106,18 @@ public class UserInterface extends Thread {
                         stringArrayList.add(transferTo);
 //                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
-                    case 5:
+                    case 6:
                         out.println("Thank you, and goodbye.");
                         // when this command arrives at client, client will gracefully exit :
                         out.println("DisconnectClient");
                     default:
-                        out.println("Invalid choice, please choose 1 - 5");
+                        out.println("Invalid choice, please choose 1 - 6");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 5");
+                out.println("Invalid choice, please choose 1 - 6");
                 menuChoose = false;
             }
         }
