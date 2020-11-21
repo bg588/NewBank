@@ -95,30 +95,55 @@ public class NewBank {
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
-	private String addNewAccount(CustomerID customer, List<String> commandWithAccountName) {
+	private String addNewAccount(CustomerID customer, List<String> commandWithAccountNameAndDepositAmount) {
 		Customer myCurrentCustomer = customers.get(customer.getKey());
 		//flatten the list after the first split
-		var flattenlist = "";
-		for (String value : commandWithAccountName) {
-			if (value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
-				continue;
-			}
-			flattenlist += value;
+//		var flattenlist = "";
+		if (commandWithAccountNameAndDepositAmount.size() != 3) {
+			//not the correct amount of args
+			return "Wrong Amount of args";
 		}
-		//check the length of the remaining String passed in breaks the limit
-		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
+		//first input in the split array is the command
+		if(!commandWithAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
+			//Somehow the wrong command came in here
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
+		//var accountToDeposit = commandWithAccountNameAndDepositAmount.get(1);
+		double amountToDeposit;
+		try {
+			//next input in the split array must be the amount
+			//uses big decimal to keep to 2 decimal places
+			amountToDeposit = roundDouble(Double.parseDouble(commandWithAccountNameAndDepositAmount.get(2)), 2);
+		}
+		catch (NumberFormatException ex) {
+			return "deposit amount could not be converted to a valid number";
+		}
+		if(amountToDeposit <= 0.009) {
+			//cannot pay someone less that 0.01 wtv currency
+			return "Cannot deposit less than 0.01";
+		}
+
+//		for (String value : commandWithAccountNameAndDepositAmount) {
+//			if (value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
+//				continue;
+//			}
+//			flattenlist += value;
+//		}
+		//check the length of the remaining String passed in breaks the limit
+//		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
+//			return ProtocolsAndResponses.Responses.FAIL;
+//		}
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 		for (Account acc : accounts) {
-			if (acc.getAccountName().equals(flattenlist)) {
-				return ProtocolsAndResponses.Responses.FAIL;
+			if (acc.getAccountName().equalsIgnoreCase(commandWithAccountNameAndDepositAmount.get(1))) {
+				return "There is already an existing account";
 			}
 		}
-		Account theNewAccount = new Account(flattenlist, 0);
+		Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit);
 		myCurrentCustomer.addAccount(theNewAccount);
 
-		return ProtocolsAndResponses.Responses.SUCCESS;
+//		return ProtocolsAndResponses.Responses.SUCCESS;
+		return "SUCCESS\n" + "NewAccountName: "+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
 	}
 
 	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {

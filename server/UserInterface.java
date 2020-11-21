@@ -46,11 +46,15 @@ public class UserInterface extends Thread {
                     case 1:
                         out.println();
                         out.println("Creating a new account");
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.NEWACCOUNT);
                         out.println("Please enter an account name");
                         String accountName = in.readLine();
-                        out.println("NEWACCOUNT " + accountName);//test print so you can see what's being returned - to remove
-                        stringArrayList.add(ProtocolsAndResponses.Protocols.NEWACCOUNT);
                         stringArrayList.add(accountName);
+                        out.println("Please enter an initial deposit amount");
+                        String amount = in.readLine();
+                        stringArrayList.add(amount);
+                        int depositAmount = Integer.parseInt(amount);
+//                        out.println("NEWACCOUNT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 2:
                         out.println();
@@ -68,23 +72,23 @@ public class UserInterface extends Thread {
                         String pay = in.readLine();
                         stringArrayList.add(pay);
                         int amountToPay = Integer.parseInt(pay);
-                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
+//                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 4:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.MOVE);
                         out.println();
                         out.println("Move money between accounts");
                         out.println("Please enter an amount to move");
-                        String amount = in.readLine();
-                        int amountToMove = Integer.parseInt(amount);
+                        String move = in.readLine();
+                        int amountToMove = Integer.parseInt(move);
                         out.println("Transfer from which account?");
-                        stringArrayList.add(amount.trim());
+                        stringArrayList.add(move.trim());
                         String transferFrom = in.readLine();
                         stringArrayList.add(transferFrom);
                         out.println("Transfer to which account?");
                         String transferTo = in.readLine();
                         stringArrayList.add(transferTo);
-                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
+//                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 5:
                         out.println("Thank you, and goodbye.");
