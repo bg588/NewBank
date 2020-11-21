@@ -90,6 +90,8 @@ public class UserInterface extends Thread {
                         out.println("Thank you, and goodbye.");
                         // when this command arrives at client, client will gracefully exit :
                         out.println("DisconnectClient");
+                        stringArrayList.add("Logout");
+                        return (stringArrayList);
                     default:
                         out.println("Invalid choice, please choose 1 - 5");
                         menuChoose = false;
