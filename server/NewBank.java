@@ -108,6 +108,10 @@ public class NewBank {
 			//Somehow the wrong command came in here
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
+		if (commandWithAccountNameAndDepositAmount.get(1).equals("")) {
+			//account name cannot be blank
+			return "Account name cannot be blank";
+		}
 		//var accountToDeposit = commandWithAccountNameAndDepositAmount.get(1);
 		double amountToDeposit;
 		try {

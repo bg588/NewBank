@@ -9,8 +9,11 @@ Returns a list of all the customers accounts along with their current balance
 e.g. Main: 1000.0 
 
 NEWACCOUNT <Name>
-e.g. NEWACCOUNT Savings
+e.g. NEWACCOUNT Savings 100
+e.g. original balance Checking 250.0
 Returns SUCCESS or FAIL
+In case of SUCCESS)
+New Balance: Checking 150.0 Savings 100.0
 
 MOVE <Amount> <From> <To>
 e.g. MOVE 100 Main Savings 
