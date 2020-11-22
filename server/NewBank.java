@@ -1,5 +1,6 @@
 package server;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -10,23 +11,32 @@ public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private Persister persister;
 
 	private NewBank() {
 		customers = new HashMap<>();
-		addTestData();
+		persister = new Persister();
+		if (persister.fileExists()) {
+			// a persisted file exists, so load our customer data from that
+			customers = persister.getPersistedData();
+		} else {
+			// no persisted file exists, so go with the test data that we were provided
+			// this could potentially be moved later to the Persister to tidy things up
+			addTestData();
+		}
 	}
-	
+
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
 		customers.put("Bhagy", bhagy);
-		
+
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("password");
 		customers.put("Christina", christina);
-		
+
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		john.setPassword("password");
@@ -76,6 +86,9 @@ public class NewBank {
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
 				return addNewAccount(customer, request);
 			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.DEPOSIT)) {
+				return depositToExistingAccount(customer, request);
+			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
 				return payPersonOrCompanyAnAmount(customer, request);
 			}
@@ -84,6 +97,9 @@ public class NewBank {
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return showMyAccounts(customer);
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
+				return exit();
 			}
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
@@ -94,31 +110,110 @@ public class NewBank {
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
-	private String addNewAccount(CustomerID customer, List<String> commandWithAccountName) {
+	private String addNewAccount(CustomerID customer, List<String> commandWithAccountNameAndDepositAmount) {
 		Customer myCurrentCustomer = customers.get(customer.getKey());
 		//flatten the list after the first split
-		var flattenlist = "";
-		for (String value : commandWithAccountName) {
-			if (value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
-				continue;
-			}
-			flattenlist += value;
+//		var flattenlist = "";
+		if (commandWithAccountNameAndDepositAmount.size() != 3) {
+			//not the correct amount of args
+			return "Wrong Amount of args";
 		}
-		//check the length of the remaining String passed in breaks the limit
-		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
+		//first input in the split array is the command
+		if(!commandWithAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
+			//Somehow the wrong command came in here
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
+		if (commandWithAccountNameAndDepositAmount.get(1).equals("")) {
+			//account name cannot be blank
+			return "Account name cannot be blank";
+		}
+		//var accountToDeposit = commandWithAccountNameAndDepositAmount.get(1);
+		double amountToDeposit;
+		try {
+			//next input in the split array must be the amount
+			//uses big decimal to keep to 2 decimal places
+			amountToDeposit = roundDouble(Double.parseDouble(commandWithAccountNameAndDepositAmount.get(2)), 2);
+		}
+		catch (NumberFormatException ex) {
+			return "deposit amount could not be converted to a valid number";
+		}
+		if(amountToDeposit <= 0.009) {
+			//cannot pay someone less that 0.01 wtv currency
+			return "Cannot deposit less than 0.01";
+		}
+
+//		for (String value : commandWithAccountNameAndDepositAmount) {
+//			if (value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
+//				continue;
+//			}
+//			flattenlist += value;
+//		}
+		//check the length of the remaining String passed in breaks the limit
+//		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
+//			return ProtocolsAndResponses.Responses.FAIL;
+//		}
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 		for (Account acc : accounts) {
-			if (acc.getAccountName().equals(flattenlist)) {
-				return ProtocolsAndResponses.Responses.FAIL;
+			if (acc.getAccountName().equalsIgnoreCase(commandWithAccountNameAndDepositAmount.get(1))) {
+				return "There is already an existing account";
 			}
 		}
-		Account theNewAccount = new Account(flattenlist, 0);
+		Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit);
 		myCurrentCustomer.addAccount(theNewAccount);
 
-		return ProtocolsAndResponses.Responses.SUCCESS;
+//		return ProtocolsAndResponses.Responses.SUCCESS;
+		return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
 	}
+
+	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
+	private String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
+
+		if (commandWithExistingAccountNameAndDepositAmount.size() != 3) {
+			//not the correct amount of args
+			return "Wrong Amount of args";
+		}
+		//first input in the split array is the command
+		if(!commandWithExistingAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.DEPOSIT)) {
+			//Somehow the wrong command came in here
+			return ProtocolsAndResponses.Responses.FAIL;
+		}
+		if (commandWithExistingAccountNameAndDepositAmount.get(1).equals("")) {
+			//account name cannot be blank
+			return "Account name cannot be blank";
+		}
+		//var accountToDeposit = commandWithAccountNameAndDepositAmount.get(1);
+		double amountToDepositToExistingAccount;
+		try {
+			//next input in the split array must be the amount
+			//uses big decimal to keep to 2 decimal places
+			amountToDepositToExistingAccount = roundDouble(Double.parseDouble(commandWithExistingAccountNameAndDepositAmount.get(2)), 2);
+		}
+		catch (NumberFormatException ex) {
+			return "deposit amount could not be converted to a valid number";
+		}
+		if(amountToDepositToExistingAccount <= 0.009) {
+			//cannot pay someone less that 0.01 wtv currency
+			return "Cannot deposit less than 0.01";
+		}
+		//get the current users customer object
+		var me = customers.get(customer.getKey());
+		//get the current users list of accounts
+		var myAccounts = me.getAccounts();
+
+		String intendedDepositAccount = commandWithExistingAccountNameAndDepositAmount.get(1);
+
+		for (Account acc : myAccounts) {
+			if (acc.getAccountName().equalsIgnoreCase(intendedDepositAccount)) {
+				var priorBal = acc.getBalance();
+				acc.addMoneyToAccount(amountToDepositToExistingAccount);
+				var newBal = priorBal+amountToDepositToExistingAccount;
+				return "SUCCESS\n" + "AccountName:"+acc.getAccountName()+" Deposited:"+amountToDepositToExistingAccount+" NewBalance:"+newBal;
+			}
+			return "Cannot deposit to an account that does not exist. Please create account first";
+		}
+		return ProtocolsAndResponses.Responses.FAIL;
+	}
+
 
 	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
 		var myName = customer.getKey();
@@ -172,13 +267,26 @@ public class NewBank {
 						//yay this account has enough - reduce my balance and pay the person
 						account.reduceBalance(amountToPay);
 						PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
-						return ProtocolsAndResponses.Responses.SUCCESS;
+						return "SUCCESS\n" + "NewBalance:"+account.getAccountName()+" "+account.getBalance().toString();
 					}
 				}
 				break;
 			}
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+		Customer me = customers.get(customer.getKey());
+		ArrayList<Account> allMyAccounts = me.getAccounts();
+
+		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
+		for (Account myAccount : allMyAccounts) {
+			listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+		}
+		StringBuffer sb = new StringBuffer();
+		for(Account eachItemInArray:listOfMyAccountsAndBalance){
+			sb.append(eachItemInArray);
+			sb.append(" ");
+		}
+		String balance = sb.toString();
+		return "FAIL\n" + "Balance:"+balance;
 	}
 
 	//Based on Ioannis's PAY code
@@ -236,13 +344,32 @@ public class NewBank {
 							// reduce amount from origin account and increase balance in destination account
 							originAccount.reduceBalance(amountToMove);
 							destinationAccount.addMoneyToAccount(amountToMove);
-							return ProtocolsAndResponses.Responses.SUCCESS;
+							return "SUCCESS\n" + "New Balance:"+intendedOriginAccountName + " " + originAccount.getBalance().toString() +
+									" " + intendedDestinationAccountName + " " + destinationAccount.getBalance().toString();
 						}
 					}
 				}
 			}
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+
+		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
+		for (Account myAccount : allMyAccounts) {
+			listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+		}
+		StringBuffer sb = new StringBuffer();
+		for(Account eachItemInArray:listOfMyAccountsAndBalance){
+			sb.append(eachItemInArray);
+			sb.append(" ");
+		}
+		String balance = sb.toString();
+		return "FAIL\n" + "Balance:"+balance;
+	}
+
+	private String exit() {
+		// save down data
+		persister.setPersistedData(customers);
+		// return exit
+		return ProtocolsAndResponses.Responses.EXIT;
 	}
 
 	private static double roundDouble(double d, int places) {

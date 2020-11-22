@@ -16,17 +16,17 @@ public class Account {
 	}
 	
 	public String toString() {
-		return (accountName + ": " + openingBalance);
+		return (accountName + " " + openingBalance);
 	}
 
-	public void addMoneyToAccount(double ammount)
+	public void addMoneyToAccount(double amount)
 	{
-		openingBalance += ammount;
+		openingBalance += amount;
 	}
 
-	public void reduceBalance(double ammount)
+	public void reduceBalance(double amount)
 	{
-		openingBalance = openingBalance - ammount;
+		openingBalance = openingBalance - amount;
 	}
 
 	public Double getBalance()

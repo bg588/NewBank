@@ -97,7 +97,7 @@ public class NewBankClientHandler extends Thread{
 				loginAttemptsRemaining--;
 				if (loginAttemptsRemaining == 0) {
 					//Exceed max login attempts. Print DisconnectClient to stop ExampleClient.
-					out.println("DisconnectClient");
+					out.println(ProtocolsAndResponses.Responses.EXIT);
 				} else {
 					out.println("You have " + (loginAttemptsRemaining) + " username attempt(s) remaining.");
 					run();
