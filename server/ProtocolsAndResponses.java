@@ -9,6 +9,7 @@ public class ProtocolsAndResponses {
 
         public static class Protocols {
             public static final String NEWACCOUNT = "NEWACCOUNT";
+            public static final String DEPOSIT = "DEPOSIT";
             public static final String SHOWMYACCOUNTS = "SHOWMYACCOUNTS";
             public static final String PAY = "PAY";
             public static final String MOVE = "MOVE";
