@@ -198,7 +198,7 @@ public class NewBank {
 				return "SUCCESS\n" + "AccountName:"+acc.getAccountName()+" Deposited:"+amountToDepositToExistingAccount+" NewBalance:"+newBal;
 			}
 		}
-		return String.format("No account name: %s Cannot deposit to an account that does not exist. " +
+		return String.format("No account name: %s \nCannot deposit to an account that does not exist. " +
 				"Please create account first or choose from the available accounts: %s", intendedDepositAccount, accountNames);
 	}
 
@@ -347,12 +347,12 @@ public class NewBank {
 
 		if(!accountNames.contains(intendedOriginAccountName))
 		{
-			return String.format("No account name: %s Cannot move from an account that does not exist. " +
+			return String.format("No account name: %s\nCannot move from an account that does not exist. " +
 					"Please create an account first or choose from the available accounts: %s", intendedOriginAccountName, accountNames);
 		}
 		if(!accountNames.contains(intendedDestinationAccountName))
 		{
-			return String.format("No account name: %s Cannot move to an account that does not exist. " +
+			return String.format("No account name: %s\nCannot move to an account that does not exist. " +
 					"Please create an account first or choose from the available accounts: %s", intendedDestinationAccountName, accountNames);
 		}
 
