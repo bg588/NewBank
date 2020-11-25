@@ -113,7 +113,6 @@ public class NewBank {
 	private String addNewAccount(CustomerID customer, List<String> commandWithAccountNameAndDepositAmount) {
 		Customer myCurrentCustomer = customers.get(customer.getKey());
 		//flatten the list after the first split
-//		var flattenlist = "";
 		if (commandWithAccountNameAndDepositAmount.size() != 3) {
 			//not the correct amount of args
 			return "Wrong Amount of args";
@@ -141,17 +140,6 @@ public class NewBank {
 			//cannot pay someone less that 0.01 wtv currency
 			return "Cannot deposit less than 0.01";
 		}
-
-//		for (String value : commandWithAccountNameAndDepositAmount) {
-//			if (value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
-//				continue;
-//			}
-//			flattenlist += value;
-//		}
-		//check the length of the remaining String passed in breaks the limit
-//		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
-//			return ProtocolsAndResponses.Responses.FAIL;
-//		}
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 		for (Account acc : accounts) {
 			if (acc.getAccountName().equalsIgnoreCase(commandWithAccountNameAndDepositAmount.get(1))) {
@@ -161,7 +149,6 @@ public class NewBank {
 		Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit);
 		myCurrentCustomer.addAccount(theNewAccount);
 
-//		return ProtocolsAndResponses.Responses.SUCCESS;
 		return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
 	}
 
@@ -201,17 +188,18 @@ public class NewBank {
 		var myAccounts = me.getAccounts();
 
 		String intendedDepositAccount = commandWithExistingAccountNameAndDepositAmount.get(1);
-
+		String accountNames = "";
 		for (Account acc : myAccounts) {
+			accountNames += acc.getAccountName()+" ";
 			if (acc.getAccountName().equalsIgnoreCase(intendedDepositAccount)) {
 				var priorBal = acc.getBalance();
 				acc.addMoneyToAccount(amountToDepositToExistingAccount);
 				var newBal = priorBal+amountToDepositToExistingAccount;
 				return "SUCCESS\n" + "AccountName:"+acc.getAccountName()+" Deposited:"+amountToDepositToExistingAccount+" NewBalance:"+newBal;
 			}
-			return "Cannot deposit to an account that does not exist. Please create account first";
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+		return String.format("No account name: %s Cannot deposit to an account that does not exist. " +
+				"Please create account first or choose from the available accounts: %s", intendedDepositAccount, accountNames);
 	}
 
 
@@ -328,10 +316,15 @@ public class NewBank {
 			return "Cannot move between the same account";
 		}
 
+		//get the current users customer object
 		Customer me = customers.get(customer.getKey());
 		ArrayList<Account> allMyAccounts = me.getAccounts();
 
+		String accountNames = "";
+
+
 		for (Account originAccount : allMyAccounts) {
+			accountNames += originAccount.getAccountName()+" ";
 			// looping through all accounts and searching for intendedOriginAccountName
 			if (intendedOriginAccountName.equalsIgnoreCase(originAccount.getAccountName())) {
 				// intendedOriginAccountName is a real account, now check if intendedDestinationAccountName is real
@@ -350,6 +343,17 @@ public class NewBank {
 					}
 				}
 			}
+		}
+
+		if(!accountNames.contains(intendedOriginAccountName))
+		{
+			return String.format("No account name: %s Cannot move from an account that does not exist. " +
+					"Please create an account first or choose from the available accounts: %s", intendedOriginAccountName, accountNames);
+		}
+		if(!accountNames.contains(intendedDestinationAccountName))
+		{
+			return String.format("No account name: %s Cannot move to an account that does not exist. " +
+					"Please create an account first or choose from the available accounts: %s", intendedDestinationAccountName, accountNames);
 		}
 
 		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
