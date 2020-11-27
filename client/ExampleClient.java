@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -52,11 +53,19 @@ public class ExampleClient extends Thread {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+
 			}
 		}
 	}
 	
-	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-		new ExampleClient("localhost",14002).start();
+	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException, ConnectException {
+
+		try {
+			new ExampleClient("localhost", 14002).start();
+		} catch (ConnectException e) {
+			System.out.println();
+			System.out.println("*** Our apologies - NewBank is currently unavailable  ***");
+			System.out.println("*** Please try again later or call us on 01225 383214 ***");
+		}
 	}
 }
