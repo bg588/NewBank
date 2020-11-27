@@ -98,6 +98,9 @@ public class NewBank {
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return showMyAccounts(customer);
 			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
+				return changePassword(customer, request);
+			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
 				return exit();
 			}
@@ -367,6 +370,15 @@ public class NewBank {
 		}
 		String balance = sb.toString();
 		return "FAIL\n" + "Balance:"+balance;
+	}
+
+	private String changePassword(CustomerID customerID,  List<String> newPassword) {
+		Customer me = customers.get(customerID.getKey());
+		if (me.changePassword(newPassword.get(1))) {
+			// this returns success if new password is accepted (conditions defined within Password class)
+			return ProtocolsAndResponses.Responses.SUCCESS;
+		}
+		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
 	private String exit() {

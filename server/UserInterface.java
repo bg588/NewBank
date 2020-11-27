@@ -28,11 +28,12 @@ public class UserInterface extends Thread {
         this.out.println("*  3) Show my accounts             *");
         this.out.println("*  4) Pay someone                  *");
         this.out.println("*  5) Move money between accounts  *");
-        this.out.println("*  6) Exit                         *");
+        this.out.println("*  6) Change Password              *");
+        this.out.println("*  7) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 6)");
+        this.out.println("Enter an option (1 - 7)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -57,7 +58,6 @@ public class UserInterface extends Thread {
 //                        int depositAmount = Integer.parseInt(amount);
 //                        out.println("NEWACCOUNT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
-
                     case 2:
                         out.println();
                         out.println("Deposit cash");
@@ -71,7 +71,6 @@ public class UserInterface extends Thread {
 //                        int depositAmount = Integer.parseInt(amount);
 //                        out.println("DEPOSIT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
-
                     case 3:
                         out.println();
                         out.println("Showing accounts");
@@ -107,19 +106,27 @@ public class UserInterface extends Thread {
 //                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 6:
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
+                        out.println();
+                        out.println("Change your password");
+                        out.println("Please enter a new password : ");
+                        String newPassword = in.readLine();
+                        stringArrayList.add(newPassword);
+                        return stringArrayList;
+                    case 7:
                         out.println("Thank you, and goodbye.");
                         // when this command arrives at client, client will gracefully exit :
                         out.println("DisconnectClient");
                         stringArrayList.add("Logout");
                         return (stringArrayList);
                     default:
-                        out.println("Invalid choice, please choose 1 - 6");
+                        out.println("Invalid choice, please choose 1 - 7");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 6");
+                out.println("Invalid choice, please choose 1 - 7");
                 menuChoose = false;
             }
         }

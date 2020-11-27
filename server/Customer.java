@@ -33,8 +33,12 @@ public class Customer {
 		accounts.add(account);		
 	}
 
-	public void setPassword(String inputPassword) {
-		password.setPassword(inputPassword);
+	public void setPassword(String password) {
+		this.password.setPassword(password);
+	}
+
+	public boolean changePassword(String newPassword) {
+		return password.changePassword(newPassword);
 	}
 
 	public Password getPassword() {
