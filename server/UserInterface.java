@@ -67,7 +67,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(depositAccountName);
                         out.println("Please enter an amount to deposit");
                         String depositAmount = in.readLine();
-                        stringArrayList.add(depositAmount);
+                        stringArrayList.add(depositAmount.trim());
 //                        int depositAmount = Integer.parseInt(amount);
 //                        out.println("DEPOSIT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
@@ -86,8 +86,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(payee);
                         out.println("Please enter an amount");
                         String pay = in.readLine();
-                        stringArrayList.add(pay);
-                        int amountToPay = Integer.parseInt(pay);
+                        stringArrayList.add(pay.trim());
 //                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 5:
@@ -96,9 +95,8 @@ public class UserInterface extends Thread {
                         out.println("Move money between accounts");
                         out.println("Please enter an amount to move");
                         String move = in.readLine();
-                        int amountToMove = Integer.parseInt(move);
-                        out.println("Transfer from which account?");
                         stringArrayList.add(move.trim());
+                        out.println("Transfer from which account?");
                         String transferFrom = in.readLine();
                         stringArrayList.add(transferFrom);
                         out.println("Transfer to which account?");
