@@ -28,12 +28,13 @@ public class UserInterface extends Thread {
         this.out.println("*  3) Show my accounts             *");
         this.out.println("*  4) Pay someone                  *");
         this.out.println("*  5) Move money between accounts  *");
-        this.out.println("*  6) Change Password              *");
-        this.out.println("*  7) Exit                         *");
+        this.out.println("*  6) Apply for personal loan *");
+        this.out.println("*  7) Change Password              *");
+        this.out.println("*  8) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 7)");
+        this.out.println("Enter an option (1 - 8)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -104,6 +105,32 @@ public class UserInterface extends Thread {
 //                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 6:
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.PLOAN);//command item 1
+                        out.println();
+                        out.println("You are applying for a personal loan");
+                        out.println("Please enter an amount you want to borrow");
+                        String amountToBorrow = in.readLine();
+                        stringArrayList.add(amountToBorrow.trim()); //command item 2
+                        out.println("What period do you want to borrow over? Please enter in number of months (e.g. 3 years = 36 months)");
+                        String loanTerm = in.readLine();
+                        stringArrayList.add(loanTerm.trim()); //command item 3
+                        out.println("What is your annual salary?");
+                        String salary = in.readLine();
+                        stringArrayList.add(salary.trim());//command item 4
+                        out.println("Below are your parameters. Please confirm before proceeding.\n" + "You want to borrow "+amountToBorrow + " over " + loanTerm + " months. Your salary is "+salary);
+                        out.println("Please press 1) if you are happy to proceed, and 2) if you want to restart the process or 3) go back to main menu");
+                        String choiceUponConfirmation = in.readLine();
+                        int Mychoice = Integer.parseInt(choiceUponConfirmation);
+                        switch (Mychoice) {
+                            case 1:
+                                return stringArrayList;
+                            case 2:
+                                break;//I want to bring user back to beginning of personal loan application dialogue";
+                            case 3:
+                                break;//I want to bring user back to the main menu";
+                        }
+
+                    case 7:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
@@ -111,20 +138,20 @@ public class UserInterface extends Thread {
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);
                         return stringArrayList;
-                    case 7:
+                    case 8:
                         out.println("Thank you, and goodbye.");
                         // when this command arrives at client, client will gracefully exit :
                         out.println("DisconnectClient");
                         stringArrayList.add("Logout");
                         return (stringArrayList);
                     default:
-                        out.println("Invalid choice, please choose 1 - 7");
+                        out.println("Invalid choice, please choose 1 - 8");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 7");
+                out.println("Invalid choice, please choose 1 - 8");
                 menuChoose = false;
             }
         }

@@ -13,6 +13,7 @@ public class ProtocolsAndResponses {
             public static final String SHOWMYACCOUNTS = "SHOWMYACCOUNTS";
             public static final String PAY = "PAY";
             public static final String MOVE = "MOVE";
+            public static final String PLOAN = "PLOAN";
             public static final String CHANGEPW = "CHANGEPW";
             public static final String EXIT = "EXIT";
         }
