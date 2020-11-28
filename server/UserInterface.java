@@ -28,11 +28,12 @@ public class UserInterface extends Thread {
         this.out.println("*  3) Show my accounts             *");
         this.out.println("*  4) Pay someone                  *");
         this.out.println("*  5) Move money between accounts  *");
-        this.out.println("*  6) Exit                         *");
+        this.out.println("*  6) Apply for personal loan      *");
+        this.out.println("*  7) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 6)");
+        this.out.println("Enter an option (1 - 7)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -105,6 +106,32 @@ public class UserInterface extends Thread {
 //                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 6:
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.PLOAN);//command item 1
+                        out.println();
+                        out.println("You are applying for a personal loan");
+                        out.println("Please enter an amount you want to borrow");
+                        String amountToBorrow = in.readLine();
+                        stringArrayList.add(amountToBorrow.trim()); //command item 2
+                        out.println("What period do you want to borrow over? Please enter in number of months (e.g. 3 years = 36 months)");
+                        String loanTerm = in.readLine();
+                        stringArrayList.add(loanTerm.trim()); //command item 3
+                        out.println("What is your monthly salary?");
+                        String salary = in.readLine();
+                        stringArrayList.add(salary.trim());//command item 4
+                        out.println("Below are your parameters. Please confirm before proceeding.\n" + "You want to borrow "+amountToBorrow + " over " + loanTerm + " months. Your salary is "+salary);
+                        out.println("Please press 1) if you are happy to proceed, and 2) if you want to restart the process or 3) go back to main menu");
+                        String choiceUponConfirmation = in.readLine();
+                        int Mychoice = Integer.parseInt(choiceUponConfirmation);
+                        switch (Mychoice) {
+                            case 1:
+                                return stringArrayList;
+                            case 2:
+                                break;//I want to bring user back to beginning of case switch 6 dialogue";
+                            case 3:
+                                break;//I want to bring user back to main menu";
+                        }
+
+                    case 7:
                         out.println("Thank you, and goodbye.");
                         // when this command arrives at client, client will gracefully exit :
                         out.println("DisconnectClient");
