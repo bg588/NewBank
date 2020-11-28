@@ -28,7 +28,7 @@ public class UserInterface extends Thread {
         this.out.println("*  3) Show my accounts             *");
         this.out.println("*  4) Pay someone                  *");
         this.out.println("*  5) Move money between accounts  *");
-        this.out.println("*  6) Apply for personal loan *");
+        this.out.println("*  6) Apply for personal loan      *");
         this.out.println("*  7) Change Password              *");
         this.out.println("*  8) Exit                         *");
         this.out.println("*                                  *");
