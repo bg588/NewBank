@@ -108,6 +108,10 @@ public class NewBank {
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
 				return exit();
 			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.MAINMENU)) {
+				return mainMenu();
+			}
+
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
@@ -484,6 +488,10 @@ public class NewBank {
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
+	}
+
+	private String mainMenu() {
+		return ProtocolsAndResponses.Responses.SUCCESS;
 	}
 
 	private String exit() {

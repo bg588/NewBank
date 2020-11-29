@@ -16,5 +16,6 @@ public class ProtocolsAndResponses {
             public static final String PLOAN = "PLOAN";
             public static final String CHANGEPW = "CHANGEPW";
             public static final String EXIT = "EXIT";
+            public static final String MAINMENU = "MAINMENU";
         }
 }
