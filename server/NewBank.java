@@ -422,9 +422,9 @@ public class NewBank {
 		} catch (NumberFormatException ex) {
 			return "loan term could not be converted to a valid number";
 		}
-		if(loanTerm <= 0) {
-			//cannot borrow in a period less than 0 month or less
-			return "Cannot borrow over 0 month or less";
+		if (loanTerm <= 0 || loanTerm > 120) {
+			//cannot borrow in a period less than 0 month or less or greater than 120 months
+			return "Please enter an term between 1 and 120 months";
 		}
 
 		int salary;

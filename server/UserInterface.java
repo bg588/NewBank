@@ -112,6 +112,7 @@ public class UserInterface extends Thread {
                         String amountToBorrow = in.readLine();
                         stringArrayList.add(amountToBorrow.trim()); //command item 2
                         out.println("What period do you want to borrow over? Please enter in number of months (e.g. 3 years = 36 months)");
+                        out.println("You can borrow between 1 month and 10 years (120 Months)");
                         String loanTerm = in.readLine();
                         stringArrayList.add(loanTerm.trim()); //command item 3
                         out.println("What is your annual salary?");
@@ -129,7 +130,6 @@ public class UserInterface extends Thread {
                             case 3:
                                 break;//I want to bring user back to the main menu";
                         }
-
                     case 7:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
