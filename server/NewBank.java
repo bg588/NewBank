@@ -90,6 +90,9 @@ public class NewBank {
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.DEPOSIT)) {
 				return depositToExistingAccount(customer, request);
 			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+				return withdrawFromAccount(customer, request);
+			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return showMyAccounts(customer);
 			}
@@ -213,6 +216,10 @@ public class NewBank {
 				"Please create account first or choose from the available accounts: %s", intendedDepositAccount, accountNames);
 	}
 
+	private String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount){
+
+		return null;
+	}
 
 	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
 		var myName = customer.getKey();

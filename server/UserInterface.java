@@ -25,16 +25,17 @@ public class UserInterface extends Thread {
         this.out.println("*                                  *");
         this.out.println("*  1) Create a new account         *");
         this.out.println("*  2) Deposit cash                 *");
-        this.out.println("*  3) Show my accounts             *");
-        this.out.println("*  4) Pay someone                  *");
-        this.out.println("*  5) Move money between accounts  *");
-        this.out.println("*  6) Apply for personal loan      *");
-        this.out.println("*  7) Change Password              *");
-        this.out.println("*  8) Exit                         *");
+        this.out.println("*  3) Withdraw cash                *");
+        this.out.println("*  4) Show my accounts             *");
+        this.out.println("*  5) Pay someone                  *");
+        this.out.println("*  6) Move money between accounts  *");
+        this.out.println("*  7) Apply for personal loan      *");
+        this.out.println("*  8) Change Password              *");
+        this.out.println("*  9) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 8)");
+        this.out.println("Enter an option (1 - 9)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -74,10 +75,21 @@ public class UserInterface extends Thread {
                         return stringArrayList;
                     case 3:
                         out.println();
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.WITHDRAW);
+                        out.println("Please enter the account name of the account you'd like to withdraw from");
+                        String withdrawAccountName = in.readLine();
+                        stringArrayList.add(withdrawAccountName);
+                        out.println("Please enter the amount you'd like to withdraw");
+                        String withdrawAmount = in.readLine();
+                        int withdrawnAmount= Integer.parseInt(withdrawAmount);
+                        stringArrayList.add(withdrawAmount);
+                        return stringArrayList;
+                    case 4:
+                        out.println();
                         out.println("Showing accounts");
                         stringArrayList.add(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS);
                         return stringArrayList;
-                    case 4:
+                    case 5:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.PAY);
                         out.println();
                         out.println("Pay someone");
@@ -89,7 +101,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(pay.trim());
 //                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
                         return stringArrayList;
-                    case 5:
+                    case 6:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.MOVE);
                         out.println();
                         out.println("Move money between accounts");
@@ -104,7 +116,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(transferTo);
 //                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
-                    case 6:
+                    case 7:
                         while (true) {
                             stringArrayList.add(ProtocolsAndResponses.Protocols.PLOAN);//command item 1
                             out.println();
@@ -147,7 +159,7 @@ public class UserInterface extends Thread {
                                 out.println("Invalid choice, please enter 1 - 3");
                             }
                         }
-                    case 7:
+                    case 8:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
@@ -155,19 +167,19 @@ public class UserInterface extends Thread {
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);
                         return stringArrayList;
-                    case 8:
+                    case 9:
                         out.println("Thank you, and goodbye.");
                         //This will call Exit within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
                         return stringArrayList;
                     default:
-                        out.println("Invalid choice, please choose 1 - 8");
+                        out.println("Invalid choice, please choose 1 - 9");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 8");
+                out.println("Invalid choice, please choose 1 - 9");
                 menuChoose = false;
             }
         }
