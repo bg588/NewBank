@@ -89,6 +89,9 @@ public class NewBank {
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.DEPOSIT)) {
 				return depositToExistingAccount(customer, request);
 			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+				return withdrawFromAccount(customer, request);
+			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
 				return payPersonOrCompanyAnAmount(customer, request);
 			}
@@ -163,6 +166,10 @@ public class NewBank {
 
 //		return ProtocolsAndResponses.Responses.SUCCESS;
 		return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
+	}
+
+	private String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount){
+
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
