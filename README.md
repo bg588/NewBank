@@ -41,3 +41,10 @@ In case of SUCCESS)
 New Balance:Checking 150.0
 In case of FAIL)
 Balance:Checking 250.0
+
+Personal Loan
+PLOAN <amountToBorrow><loanTerm(in months)><salary>
+e.g. John 10000 36 50000
+Returns SUCEESS or FAIL depending on affordability
+In case of SUCCESS
+New Blaance: Checking 10250, Personal Loan -10000

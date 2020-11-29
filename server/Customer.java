@@ -29,6 +29,16 @@ public class Customer {
 		return accounts;
 	}
 
+	public Account getAccountWithName(String nameToSearchFor) {
+		//if an account exists, returns that account
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(nameToSearchFor)) {
+				return account;
+			}
+		}
+		return null;
+	}
+
 	public void addAccount(Account account) {
 		accounts.add(account);		
 	}

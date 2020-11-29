@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.lang.Math;
 
 public class NewBank {
 	
@@ -89,14 +90,17 @@ public class NewBank {
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.DEPOSIT)) {
 				return depositToExistingAccount(customer, request);
 			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
+				return showMyAccounts(customer);
+			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
 				return payPersonOrCompanyAnAmount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.MOVE)) {
 				return moveAnAmountFromOneAccountToAnother(customer, request);
 			}
-			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
-				return showMyAccounts(customer);
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PLOAN)) {
+				return approveOrRejectLoanApplication(customer, request);
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
 				return changePassword(customer, request);
@@ -104,6 +108,10 @@ public class NewBank {
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
 				return exit();
 			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.MAINMENU)) {
+				return mainMenu();
+			}
+
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
@@ -372,6 +380,105 @@ public class NewBank {
 		return "FAIL\n" + "Balance:"+balance;
 	}
 
+
+	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
+	private String approveOrRejectLoanApplication(CustomerID customer, List<String> commandWithLoanApplicationParameters) {
+
+		if (commandWithLoanApplicationParameters.size() != 4) { //Command(0), amountToBorrow(1), loanTerm(2), salary(3)
+			//not the correct amount of args
+			return "Wrong Amount of args";
+		}
+		//first input in the split array is the command
+		if(!commandWithLoanApplicationParameters.get(0).equals(ProtocolsAndResponses.Protocols.PLOAN)) {
+			//Somehow the wrong command came in here
+			return ProtocolsAndResponses.Responses.FAIL;
+		}
+		if (commandWithLoanApplicationParameters.get(1).equals("")) {
+			//account name cannot be blank
+			return "Loan amount cannot be blank";
+		}
+		if (commandWithLoanApplicationParameters.get(2).equals("")) {
+			//account name cannot be blank
+			return "Loan term cannot be blank";
+		}
+		if (commandWithLoanApplicationParameters.get(3).equals("")) {
+			//account name cannot be blank
+			return "Your salary cannot be blank";
+		}
+
+		double amountToBorrow;
+		try {
+			//next input in the split array must be the amount
+			//uses big decimal to keep to 2 decimal places
+			amountToBorrow = roundDouble(Double.parseDouble(commandWithLoanApplicationParameters.get(1)), 2);
+		} catch (NumberFormatException ex) {
+			return "deposit amount could not be converted to a valid number";
+		}
+		if(amountToBorrow <= 0.009) {
+			//cannot borrow less than 0.01 wtv currency
+			return "Cannot borrow less than 0.01";
+		}
+
+		int loanTerm;
+		try {
+			//next input in the split array must be the amount
+			loanTerm = Integer.parseInt(commandWithLoanApplicationParameters.get(2));
+		} catch (NumberFormatException ex) {
+			return "loan term could not be converted to a valid number";
+		}
+		if (loanTerm <= 0 || loanTerm > 120) {
+			//cannot borrow in a period less than 0 month or less or greater than 120 months
+			return "Please enter an term between 1 and 120 months";
+		}
+
+		int salary;
+		try {
+			//next input in the split array must be the amount
+			salary = Integer.parseInt(commandWithLoanApplicationParameters.get(3));
+		} catch (NumberFormatException ex) {
+			return "salary could not be converted to a valid number";
+		}
+		if(salary <= 0) {
+			//cannot borrow on a salary less than 0 month or less
+			return "Cannot borrow with 0 salary";
+		}
+
+		double affordability;
+		affordability = (salary / 12.0) * FinancialParameters.BorrowingLimit;
+		double overallInterestPerMonth;
+		overallInterestPerMonth = FinancialParameters.BankOfEnglandBaseRate /
+				(12 + (FinancialParameters.NewBankMargin / 12));
+		double monthlyRepayment;
+		monthlyRepayment = amountToBorrow * (overallInterestPerMonth * (Math.pow(1 + overallInterestPerMonth,loanTerm)))/
+				(Math.pow(1 + overallInterestPerMonth,loanTerm) - 1);
+		//if the bank thinks the loan maount is affordable to pay
+		if (monthlyRepayment <= affordability) {
+			//get the current users list of accounts
+			Customer me = customers.get(customer.getKey());
+			ArrayList<Account> myAccounts = me.getAccounts();
+
+			Account loanAccount = me.getAccountWithName("Personal Loan");
+
+			if (loanAccount != null) {
+				//a loan account exists already, so update that
+				loanAccount.reduceBalance(amountToBorrow);
+			} else {
+				//a loan account doesn't exist yet, so create one
+				loanAccount = new Account("Personal Loan", -amountToBorrow);
+				me.addAccount(loanAccount);
+			}
+
+			//get first account from client account list and pay loan amount into the account
+			Account accountToAddMoneyInto = myAccounts.get(0);
+			accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
+
+			return "SUCCESS\n" + "Your New Balance is:" + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance().toString() +
+					"\nAnd your new balance of loan account is:" + loanAccount.getBalance().toString();
+
+		}
+		return ProtocolsAndResponses.Responses.FAIL;
+	}
+
 	private String changePassword(CustomerID customerID,  List<String> newPassword) {
 		Customer me = customers.get(customerID.getKey());
 		if (me.changePassword(newPassword.get(1))) {
@@ -379,6 +486,10 @@ public class NewBank {
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
+	}
+
+	private String mainMenu() {
+		return ProtocolsAndResponses.Responses.SUCCESS;
 	}
 
 	private String exit() {

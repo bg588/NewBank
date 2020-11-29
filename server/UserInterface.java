@@ -28,12 +28,13 @@ public class UserInterface extends Thread {
         this.out.println("*  3) Show my accounts             *");
         this.out.println("*  4) Pay someone                  *");
         this.out.println("*  5) Move money between accounts  *");
-        this.out.println("*  6) Change Password              *");
-        this.out.println("*  7) Exit                         *");
+        this.out.println("*  6) Apply for personal loan      *");
+        this.out.println("*  7) Change Password              *");
+        this.out.println("*  8) Exit                         *");
         this.out.println("*                                  *");
         this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 7)");
+        this.out.println("Enter an option (1 - 8)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -104,6 +105,49 @@ public class UserInterface extends Thread {
 //                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 6:
+                        while (true) {
+                            stringArrayList.add(ProtocolsAndResponses.Protocols.PLOAN);//command item 1
+                            out.println();
+                            out.println("You are applying for a personal loan");
+                            out.println("Please enter an amount you want to borrow");
+                            String amountToBorrow = in.readLine();
+                            stringArrayList.add(amountToBorrow.trim()); //command item 2
+                            out.println("What period do you want to borrow over? Please enter in number of months (e.g. 3 years = 36 months)");
+                            out.println("You can borrow between 1 month and 10 years (120 Months)");
+                            String loanTerm = in.readLine();
+                            stringArrayList.add(loanTerm.trim()); //command item 3
+                            out.println("What is your annual salary?");
+                            String salary = in.readLine();
+                            stringArrayList.add(salary.trim());//command item 4
+                            out.println("Below are your parameters. Please confirm before proceeding.\n" + "You want to borrow " + amountToBorrow + " over " + loanTerm + " months. Your salary is " + salary);
+                            out.println("Please press 1) if you are happy to proceed, and 2) if you want to restart the process or 3) go back to main menu");
+                            String choiceUponConfirmation = in.readLine();
+                            try {
+                                // this needs to be in a try block in case non-integer input
+                                int myChoice = Integer.parseInt(choiceUponConfirmation);
+                                switch (myChoice) {
+                                    case 1:
+                                        return stringArrayList;
+                                    case 3:
+                                        //clear Array and add MAINMENU, this then gets processed in NewBank
+                                        stringArrayList.clear();
+                                        stringArrayList.add(ProtocolsAndResponses.Protocols.MAINMENU);
+                                        return stringArrayList;
+                                    default:
+                                        //this needs to come last, otherwise the switch/case it will keep going
+                                        //until it hits a return and return that
+                                        //clear stringArrayList and return to start of loop
+                                        //Note this will take any integer.... not just 2.
+                                        stringArrayList.clear();
+                                }
+                            } catch (Exception e) {
+                                //we are here if someone has input a non integer
+                                //clear stringArrayList and start again at top of this loop
+                                stringArrayList.clear();
+                                out.println("Invalid choice, please enter 1 - 3");
+                            }
+                        }
+                    case 7:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
@@ -111,20 +155,19 @@ public class UserInterface extends Thread {
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);
                         return stringArrayList;
-                    case 7:
+                    case 8:
                         out.println("Thank you, and goodbye.");
-                        // when this command arrives at client, client will gracefully exit :
-                        out.println("DisconnectClient");
-                        stringArrayList.add("Logout");
-                        return (stringArrayList);
+                        //This will call Exit within NewBank , which saves the csv file
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
+                        return stringArrayList;
                     default:
-                        out.println("Invalid choice, please choose 1 - 7");
+                        out.println("Invalid choice, please choose 1 - 8");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 7");
+                out.println("Invalid choice, please choose 1 - 8");
                 menuChoose = false;
             }
         }
