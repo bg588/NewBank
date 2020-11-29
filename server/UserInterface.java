@@ -157,10 +157,9 @@ public class UserInterface extends Thread {
                         return stringArrayList;
                     case 8:
                         out.println("Thank you, and goodbye.");
-                        // when this command arrives at client, client will gracefully exit :
-                        out.println("DisconnectClient");
-                        stringArrayList.add("Logout");
-                        return (stringArrayList);
+                        //This will call Exit within NewBank , which saves the csv file
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
+                        return stringArrayList;
                     default:
                         out.println("Invalid choice, please choose 1 - 8");
                         menuChoose = false;

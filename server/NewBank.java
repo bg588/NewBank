@@ -451,8 +451,6 @@ public class NewBank {
 		double monthlyRepayment;
 		monthlyRepayment = amountToBorrow * (overallInterestPerMonth * (Math.pow(1 + overallInterestPerMonth,loanTerm)))/
 				(Math.pow(1 + overallInterestPerMonth,loanTerm) - 1);
-		System.out.println("Monthly repayments would be " + monthlyRepayment);
-		System.out.println("Affordability says " + affordability);
 		//if the bank thinks the loan maount is affordable to pay
 		if (monthlyRepayment <= affordability) {
 			//get the current users list of accounts
