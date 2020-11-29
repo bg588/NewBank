@@ -407,8 +407,7 @@ public class NewBank {
 			//next input in the split array must be the amount
 			//uses big decimal to keep to 2 decimal places
 			amountToBorrow = roundDouble(Double.parseDouble(commandWithLoanApplicationParameters.get(1)), 2);
-		}
-		catch (NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			return "deposit amount could not be converted to a valid number";
 		}
 		if(amountToBorrow <= 0.009) {
@@ -420,8 +419,7 @@ public class NewBank {
 		try {
 			//next input in the split array must be the amount
 			loanTerm = Integer.parseInt(commandWithLoanApplicationParameters.get(2));
-		}
-		catch (NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			return "loan term could not be converted to a valid number";
 		}
 		if(loanTerm <= 0) {
@@ -433,8 +431,7 @@ public class NewBank {
 		try {
 			//next input in the split array must be the amount
 			salary = Integer.parseInt(commandWithLoanApplicationParameters.get(3));
-		}
-		catch (NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			return "salary could not be converted to a valid number";
 		}
 		if(salary <= 0) {
@@ -443,38 +440,42 @@ public class NewBank {
 		}
 
 		double affordability;
-		affordability = salary/12*FinancialParameters.BorrowingLimit;
+		affordability = (salary / 12.0) * FinancialParameters.BorrowingLimit;
 		double overallInterestPerMonth;
-		overallInterestPerMonth = FinancialParameters.BankOfEnglandBaseRate/12+FinancialParameters.NewBankMargin/12;
+		overallInterestPerMonth = FinancialParameters.BankOfEnglandBaseRate /
+				(12 + (FinancialParameters.NewBankMargin / 12));
 		double monthlyRepayment;
-		monthlyRepayment = amountToBorrow*(overallInterestPerMonth*(Math.pow(1+overallInterestPerMonth,loanTerm)))/(Math.pow(1+overallInterestPerMonth,loanTerm)-1);
-
+		monthlyRepayment = amountToBorrow * (overallInterestPerMonth * (Math.pow(1 + overallInterestPerMonth,loanTerm)))/
+				(Math.pow(1 + overallInterestPerMonth,loanTerm) - 1);
+		System.out.println("Monthly repayments would be " + monthlyRepayment);
+		System.out.println("Affordability says " + affordability);
 		//if the bank thinks the loan maount is affordable to pay
-		if(monthlyRepayment<=affordability) {
-
+		if (monthlyRepayment <= affordability) {
 			//get the current users list of accounts
-			var me = customers.get(customer.getKey());
-			var myAccounts = me.getAccounts();
-			//ArrayList<Account> allMyAccounts = me.getAccounts();
+			Customer me = customers.get(customer.getKey());
+			ArrayList<Account> myAccounts = me.getAccounts();
 
-			//add new personal loan account with loan amount in negative
-			Account theNewLoanAccount = new Account("Personal Loan", -amountToBorrow);
-			me.addAccount(theNewLoanAccount);
+			Account loanAccount = me.getAccountWithName("Personal Loan");
+
+			if (loanAccount != null) {
+				//a loan account exists already, so update that
+				loanAccount.reduceBalance(amountToBorrow);
+			} else {
+				//a loan account doesn't exist yet, so create one
+				loanAccount = new Account("Personal Loan", -amountToBorrow);
+				me.addAccount(loanAccount);
+			}
 
 			//get first account from client account list and pay loan amount into the account
 			Account accountToAddMoneyInto = myAccounts.get(0);
 			accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
 
 			return "SUCCESS\n" + "Your New Balance is:" + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance().toString() +
-					"\nAnd your new balance of loan account is:" + theNewLoanAccount.getBalance().toString();
+					"\nAnd your new balance of loan account is:" + loanAccount.getBalance().toString();
 
 		}
-
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
-
-
-
 
 	private String changePassword(CustomerID customerID,  List<String> newPassword) {
 		Customer me = customers.get(customerID.getKey());
