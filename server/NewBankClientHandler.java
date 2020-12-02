@@ -83,8 +83,10 @@ public class NewBankClientHandler extends Thread{
 					String response = bank.processRequest(customerID, request);
 					out.println(response);
 					//Server messages
-					if (request.get(0) == "Logout") {
+					if (request.get(0) == "LOGOUT") {
 						System.out.println(timeStamp() + "Logout by user " + customerID.getKey());
+						//send it back to pre-login
+						run();
 					} else {
 						System.out.println(timeStamp() + "Request from " + customerID.getKey() + ":" + request + ". Result: " + response);
 					}
