@@ -5,6 +5,7 @@ public class ProtocolsAndResponses {
             public static final String SUCCESS = "SUCCESS";
             public static final String FAIL = "FAIL";
             public static final String EXIT = "DisconnectClient";
+            public static final String LOGOUT = "Thank you, and hope to see you soon.";
         }
 
         public static class Protocols {
@@ -17,6 +18,7 @@ public class ProtocolsAndResponses {
             public static final String PLOAN = "PLOAN";
             public static final String CHANGEPW = "CHANGEPW";
             public static final String EXIT = "EXIT";
+            public static final String LOGOUT = "LOGOUT";
             public static final String MAINMENU = "MAINMENU";
         }
 }
