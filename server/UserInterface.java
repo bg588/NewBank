@@ -23,20 +23,19 @@ public class UserInterface extends Thread {
         this.out.println("************************************");
         this.out.println("*      Please choose from          *");
         this.out.println("*                                  *");
-        this.out.println("*  1)  Create a new account         *");
-        this.out.println("*  2)  Deposit cash                 *");
-        this.out.println("*  3)  Withdraw cash                *");
-        this.out.println("*  4)  Show my accounts             *");
-        this.out.println("*  5)  Pay someone                  *");
-        this.out.println("*  6)  Move money between accounts  *");
-        this.out.println("*  7)  Apply for personal loan      *");
-        this.out.println("*  8)  Change Password              *");
-        this.out.println("*  9)  Exit                         *");
-        this.out.println("*  10) Logout                       *");
-        this.out.println("*                                   *");
-        this.out.println("*************************************");
+        this.out.println("*  1) Create a new account         *");
+        this.out.println("*  2) Deposit cash                 *");
+        this.out.println("*  3) Withdraw cash                *");
+        this.out.println("*  4) Show my accounts             *");
+        this.out.println("*  5) Pay someone                  *");
+        this.out.println("*  6) Move money between accounts  *");
+        this.out.println("*  7) Apply for personal loan      *");
+        this.out.println("*  8) Change Password              *");
+        this.out.println("*  9) Exit                         *");
+        this.out.println("*                                  *");
+        this.out.println("************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 10)");
+        this.out.println("Enter an option (1 - 9)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -173,19 +172,14 @@ public class UserInterface extends Thread {
                         //This will call Exit within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
                         return stringArrayList;
-                    case 10:
-                        out.println("We are logging you out...");
-                        //This will call Exit within NewBank , which saves the csv file
-                        stringArrayList.add(ProtocolsAndResponses.Protocols.LOGOUT);
-                        return stringArrayList;
                     default:
-                        out.println("Invalid choice, please choose 1 - 10");
+                        out.println("Invalid choice, please choose 1 - 9");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 10");
+                out.println("Invalid choice, please choose 1 - 9");
                 menuChoose = false;
             }
         }

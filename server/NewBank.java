@@ -111,9 +111,6 @@ public class NewBank {
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
 				return exit();
 			}
-			if (request.get(0).equals(ProtocolsAndResponses.Protocols.LOGOUT)) {
-				return logOut();
-			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.MAINMENU)) {
 				return mainMenu();
 			}
@@ -121,7 +118,7 @@ public class NewBank {
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
-
+	
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
@@ -507,12 +504,6 @@ public class NewBank {
 		persister.setPersistedData(customers);
 		// return exit
 		return ProtocolsAndResponses.Responses.EXIT;
-	}
-	private String logOut() {
-		// save down data
-		persister.setPersistedData(customers);
-		// return logout
-		return ProtocolsAndResponses.Responses.LOGOUT;
 	}
 
 	private static double roundDouble(double d, int places) {
