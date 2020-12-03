@@ -32,7 +32,7 @@ public class Customer {
 	public Account getAccountWithName(String nameToSearchFor) {
 		//if an account exists, returns that account
 		for (Account account : accounts) {
-			if (account.getAccountName().equals(nameToSearchFor)) {
+			if (account.getAccountName().equalsIgnoreCase(nameToSearchFor)) {
 				return account;
 			}
 		}
@@ -41,6 +41,10 @@ public class Customer {
 
 	public void addAccount(Account account) {
 		accounts.add(account);		
+	}
+
+	public void removeAccount(Account account) {
+		accounts.remove(account);
 	}
 
 	public void setPassword(String password) {

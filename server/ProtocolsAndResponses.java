@@ -17,6 +17,7 @@ public class ProtocolsAndResponses {
             public static final String MOVE = "MOVE";
             public static final String PLOAN = "PLOAN";
             public static final String CHANGEPW = "CHANGEPW";
+            public static final String CLOSEACCOUNT = "CLOSEACCOUNT";
             public static final String EXIT = "EXIT";
             public static final String LOGOUT = "LOGOUT";
             public static final String MAINMENU = "MAINMENU";

@@ -9,7 +9,7 @@ import java.util.List;
 import java.lang.Math;
 
 public class NewBank {
-	
+
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private Persister persister;
@@ -107,6 +107,9 @@ public class NewBank {
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
 				return changePassword(customer, request);
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CLOSEACCOUNT)) {
+				return closeAccount(customer, request);
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
 				return exit();
@@ -496,6 +499,43 @@ public class NewBank {
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
+	}
+	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
+	private String closeAccount(CustomerID customer, List<String> commandWithAccountNameAndDepositAmount) {
+		//Customer myCurrentCustomer = customers.get(customer.getKey());
+		//flatten the list after the first split
+		if (commandWithAccountNameAndDepositAmount.size() != 2) {
+			//not the correct amount of args
+			return "Wrong Amount of args";
+		}
+		//first input in the split array is the command
+		if(!commandWithAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.CLOSEACCOUNT)) {
+			//Somehow the wrong command came in here
+			return ProtocolsAndResponses.Responses.FAIL;
+		}
+		if (commandWithAccountNameAndDepositAmount.get(1).equals("")) {
+			//account name cannot be blank
+			return "Account name cannot be blank";
+		}
+		Customer me = customers.get(customer.getKey());
+		Account accountToClose = me.getAccountWithName(commandWithAccountNameAndDepositAmount.get(1));
+		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
+
+		if (accountToClose != null) {
+
+			if(accountToClose.getBalance()==0){
+			//an account exists, so remove it
+				accounts.remove(accountToClose);
+				return "SUCCESS\n" + "Account "+accountToClose+" has been closed successfully";
+			} else{
+			return "You still have an account balance of "+accountToClose.getBalance()+"\nPlease withdraw the amount first";
+			}
+
+		}else{
+			return ProtocolsAndResponses.Responses.FAIL;
+		}
+
+
 	}
 
 	private String mainMenu() {
