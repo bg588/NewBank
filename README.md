@@ -19,8 +19,11 @@ In case of SUCCESS)
 AccountName:Checking Deposited:100.0 NewBalance:350.0
 
 3.WITHDRAW <Account><Amount>
-
-
+e.g. WITHDRAW Main 100
+e.g. original balance Checking 250.0
+Return SUCCESS or FAIL
+In case of SUCCESS)
+AccountName:Checking Withdrawn:100.0 NewBalance:150.0
 
 4.SHOWMYACCOUNTS
 Returns a list of all the customers accounts along with their current balance 
@@ -56,8 +59,13 @@ New Blaance: Checking 10250, Personal Loan -10000
 8.Change Password
 
 
-9.EXIT
+9. Close Account
+Close <accountToClose>
+SUCCESS OR FAIL depending on account balance
+If the account balance is zero it should close, otherwise it would show message that customer needs to withdraw it first.
+
+10.EXIT
 This will exit you out of ExampleClient but stay connected to NewBankServer
 
-10.LOGOUT
+11.LOGOUT
 This will bring you back to pre-log in dialogue
