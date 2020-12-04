@@ -2,7 +2,11 @@ Group 8
 
 This document details the protocol for interacting with the NewBank server.  
 
-A customer enters the command below and sees the messages returned 
+Initial Log in:
+Customer is allowed to key in password up to 3 times, before the account is locked and server disconnects.
+
+Upon successful log in, customer is brought to a menu based options of command.
+A customer enters the command below from numbered menu and sees the messages returned.
 
 1.NEWACCOUNT <Name>
 e.g. NEWACCOUNT Savings 100
@@ -57,7 +61,9 @@ In case of SUCCESS
 New Blaance: Checking 10250, Personal Loan -10000
 
 8.Change Password
-
+Customer can change password using below criteria:
+At least 8 characters with 1 capital and 1 non-number/alphabet character.
+It will return SUCCESS or FAIL.
 
 9. Close Account
 Close <accountToClose>
