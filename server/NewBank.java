@@ -1,12 +1,8 @@
 package server;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.lang.Math;
 
 public class NewBank {
 
@@ -192,9 +188,4 @@ public class NewBank {
 		return ProtocolsAndResponses.Responses.LOGOUT;
 	}
 
-	private static double roundDouble(double d, int places) {
-		BigDecimal bigDecimal = new BigDecimal(Double.toString(d));
-		bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
-		return bigDecimal.doubleValue();
-	}
 }
