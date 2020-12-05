@@ -353,7 +353,7 @@ public class NewBankAccountManager {
         double monthlyRepayment;
         monthlyRepayment = amountToBorrow * (overallInterestPerMonth * (Math.pow(1 + overallInterestPerMonth,loanTerm)))/
                 (Math.pow(1 + overallInterestPerMonth,loanTerm) - 1);
-        //if the bank thinks the loan maount is affordable to pay
+        //if the bank thinks the loan amount is affordable to pay
         if (monthlyRepayment <= affordability) {
             //get the current users list of accounts
             Customer me = newBank.customers.get(customer.getKey());
