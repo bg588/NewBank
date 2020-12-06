@@ -279,7 +279,7 @@ public class NewBankAccountManager {
         return "FAIL\n" + "Balance:"+ roundDouble(Double.parseDouble(balance),2);
     }
 
-    private static double roundDouble(double d, int places) {
+    public static double roundDouble(double d, int places) { //changed to public to use function elsewhere
         BigDecimal bigDecimal = new BigDecimal(Double.toString(d));
         bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
         return bigDecimal.doubleValue();
