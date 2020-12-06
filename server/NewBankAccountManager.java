@@ -165,7 +165,7 @@ public class NewBankAccountManager {
                         //yay this account has enough - reduce my balance and pay the person
                         account.reduceBalance(amountToPay);
                         PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
-                        return "SUCCESS\n" + "NewBalance:"+account.getAccountName()+" "+account.getBalance().toString();
+                        return "SUCCESS\n" + "NewBalance:"+account.getAccountName()+" "+ roundDouble(Double.parseDouble(account.getBalance().toString()),2); //added to return the rounded value
                     }
                 }
                 break;
@@ -184,7 +184,7 @@ public class NewBankAccountManager {
             sb.append(" ");
         }
         String balance = sb.toString();
-        return "FAIL\n" + "Balance:"+balance;
+        return "FAIL\n" + "Balance:"+ roundDouble(Double.parseDouble(balance),2); //added to return rounded value
     }
 
     public String moveAnAmountFromOneAccountToAnother(CustomerID customer,
@@ -246,8 +246,9 @@ public class NewBankAccountManager {
                             // reduce amount from origin account and increase balance in destination account
                             originAccount.reduceBalance(amountToMove);
                             destinationAccount.addMoneyToAccount(amountToMove);
-                            return "SUCCESS\n" + "New Balance:"+intendedOriginAccountName + " " + originAccount.getBalance().toString() +
-                                    " " + intendedDestinationAccountName + " " + destinationAccount.getBalance().toString();
+                            return "SUCCESS\n" + "New Balance:"+intendedOriginAccountName + " " + roundDouble(Double.parseDouble(originAccount.getBalance().toString()),2) +
+                                    " " + intendedDestinationAccountName + " " + roundDouble(Double.parseDouble(destinationAccount.getBalance().toString()),2);
+
                         }
                     }
                 }
@@ -275,7 +276,7 @@ public class NewBankAccountManager {
             sb.append(" ");
         }
         String balance = sb.toString();
-        return "FAIL\n" + "Balance:"+balance;
+        return "FAIL\n" + "Balance:"+ roundDouble(Double.parseDouble(balance),2);
     }
 
     private static double roundDouble(double d, int places) {
@@ -374,8 +375,8 @@ public class NewBankAccountManager {
             Account accountToAddMoneyInto = myAccounts.get(0);
             accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
 
-            return "SUCCESS\n" + "Your New Balance is:" + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance().toString() +
-                    "\nAnd your new balance of loan account is:" + loanAccount.getBalance().toString();
+            return "SUCCESS\n" + "Your New Balance is:" + roundDouble(Double.parseDouble(accountToAddMoneyInto.getAccountName()),2) + " " + accountToAddMoneyInto.getBalance().toString() +
+                    "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
 
         }
         return ProtocolsAndResponses.Responses.FAIL;
