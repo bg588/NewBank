@@ -102,7 +102,10 @@ public class UserInterface extends Thread {
                         out.println("Please enter an amount");
                         String pay = in.readLine();
                         stringArrayList.add(pay.trim());
-//                        out.println("PAY " + payee + " " + amountToPay); //test print so you can see what's being returned - to remove
+                        out.println("Please enter account you would like to pay from");
+                        out.println("(Leave blank for any)");
+                        String fromAccount = in.readLine();
+                        stringArrayList.add(fromAccount.trim());
                         return stringArrayList;
                     case 6:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.MOVE);
