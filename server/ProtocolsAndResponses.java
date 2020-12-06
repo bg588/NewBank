@@ -6,6 +6,7 @@ public class ProtocolsAndResponses {
             public static final String FAIL = "FAIL";
             public static final String EXIT = "DisconnectClient";
             public static final String LOGOUT = "Thank you, and hope to see you soon.";
+            public static final String PWRULES = "Passwords must be at least 8 characters long and contain at least 1 capital letter and 1 number";
         }
 
         public static class Protocols {

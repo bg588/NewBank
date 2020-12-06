@@ -159,6 +159,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
+                        out.println(ProtocolsAndResponses.Responses.PWRULES);
                         out.println("Please enter a new password : ");
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);

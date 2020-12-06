@@ -129,7 +129,7 @@ public class NewBank {
 			// this returns success if new password is accepted (conditions defined within Password class)
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+		return ProtocolsAndResponses.Responses.FAIL + " " + ProtocolsAndResponses.Responses.PWRULES;
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
