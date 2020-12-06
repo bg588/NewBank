@@ -17,6 +17,7 @@ public class Password {
 
     public boolean changePassword(String newPassword) {
 
+        //password must be at least 8 characters, contain at least 1 capital letter and at least 1 number
         boolean containsACapital = false;
         boolean containsANumber = false;
         boolean atLeastEightCharacters = false;

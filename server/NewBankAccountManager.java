@@ -97,7 +97,7 @@ public class NewBankAccountManager {
                 var priorBal = acc.getBalance();
                 acc.addMoneyToAccount(amountToDepositToExistingAccount);
                 var newBal = priorBal+amountToDepositToExistingAccount;
-                return "SUCCESS\n" + "AccountName:"+acc.getAccountName()+" Deposited:"+amountToDepositToExistingAccount+" NewBalance:"+newBal;
+                return "SUCCESS\n" + "AccountName:"+acc.getAccountName()+" Deposited:"+amountToDepositToExistingAccount+" NewBalance:"+ roundDouble(newBal,2);
             }
         }
         return String.format("No account name: %s \nCannot deposit to an account that does not exist. " +
