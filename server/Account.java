@@ -16,7 +16,7 @@ public class Account {
 	}
 	
 	public String toString() {
-		return (accountName + " " + openingBalance);
+		return (accountName + " " + NewBankAccountManager.roundDouble(openingBalance,2));
 	}
 
 	public void addMoneyToAccount(double amount)
