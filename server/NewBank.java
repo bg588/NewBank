@@ -1,12 +1,8 @@
 package server;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.lang.Math;
 
 public class NewBank {
 
@@ -136,7 +132,7 @@ public class NewBank {
 			// this returns success if new password is accepted (conditions defined within Password class)
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
-		return ProtocolsAndResponses.Responses.FAIL;
+		return ProtocolsAndResponses.Responses.FAIL + " " + ProtocolsAndResponses.Responses.PWRULES;
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
@@ -195,9 +191,4 @@ public class NewBank {
 		return ProtocolsAndResponses.Responses.LOGOUT;
 	}
 
-	private static double roundDouble(double d, int places) {
-		BigDecimal bigDecimal = new BigDecimal(Double.toString(d));
-		bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
-		return bigDecimal.doubleValue();
-	}
 }

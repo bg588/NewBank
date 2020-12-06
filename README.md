@@ -64,6 +64,7 @@ New Blaance: Checking 10250, Personal Loan -10000
 Customer can change password using below criteria:
 At least 8 characters with 1 capital and 1 non-number/alphabet character.
 It will return SUCCESS or FAIL.
+On a returned FAIL it will reiterate the requirements for a valid password
 
 9. Close Account
 Close <accountToClose>

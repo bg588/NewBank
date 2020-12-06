@@ -60,8 +60,6 @@ public class UserInterface extends Thread {
                         out.println("Please enter an initial deposit amount");
                         String amount = in.readLine();
                         stringArrayList.add(amount);
-//                        int depositAmount = Integer.parseInt(amount);
-//                        out.println("NEWACCOUNT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 2:
                         out.println();
@@ -73,8 +71,6 @@ public class UserInterface extends Thread {
                         out.println("Please enter an amount to deposit");
                         String depositAmount = in.readLine();
                         stringArrayList.add(depositAmount.trim());
-//                        int depositAmount = Integer.parseInt(amount);
-//                        out.println("DEPOSIT " + accountName+" "+depositAmount);//test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 3:
                         out.println();
@@ -102,10 +98,12 @@ public class UserInterface extends Thread {
                         out.println("Please enter an amount");
                         String pay = in.readLine();
                         stringArrayList.add(pay.trim());
+
                         out.println("Please enter account you would like to pay from");
                         out.println("(Leave blank for any)");
                         String fromAccount = in.readLine();
                         stringArrayList.add(fromAccount.trim());
+
                         return stringArrayList;
                     case 6:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.MOVE);
@@ -120,7 +118,6 @@ public class UserInterface extends Thread {
                         out.println("Transfer to which account?");
                         String transferTo = in.readLine();
                         stringArrayList.add(transferTo);
-//                        out.println("MOVE " + amountToMove + " " + transferFrom + " "+transferTo); //test print so you can see what's being returned - to remove
                         return stringArrayList;
                     case 7:
                         while (true) {
@@ -180,6 +177,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
+                        out.println(ProtocolsAndResponses.Responses.PWRULES);
                         out.println("Please enter a new password : ");
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);
