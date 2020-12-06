@@ -33,8 +33,8 @@ public class UserInterface extends Thread {
         this.out.println("*  8)  Rename Account               *");
         this.out.println("*  9)  Change Password              *");
         this.out.println("*  10) Close Account                *");
-        this.out.println("*  11) Exit                         *");
-        this.out.println("*  12) Logout                       *");
+        this.out.println("*  11) Logout                       *");
+        this.out.println("*  12) Exit                         *");
         this.out.println("*                                   *");
         this.out.println("*************************************");
         this.out.println();
@@ -193,14 +193,14 @@ public class UserInterface extends Thread {
                         stringArrayList.add(accountNameToClose);
                         return stringArrayList;
                     case 11:
-                        out.println("Thank you, and goodbye.");
-                        //This will call Exit within NewBank , which saves the csv file
-                        stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
-                        return stringArrayList;
-                    case 12:
                         out.println("We are logging you out...");
                         //This will call Logout within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.LOGOUT);
+                        return stringArrayList;
+                    case 12:
+                        out.println("Thank you, and goodbye.");
+                        //This will call Exit within NewBank , which saves the csv file
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
                         return stringArrayList;
                     default:
                         out.println("Invalid choice, please choose 1 - 12");
