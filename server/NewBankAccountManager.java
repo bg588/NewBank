@@ -380,4 +380,38 @@ public class NewBankAccountManager {
         }
         return ProtocolsAndResponses.Responses.FAIL;
     }
+
+    public String renameAccount(CustomerID customer, List<String> commandWithRenameParameters) {
+
+        if (commandWithRenameParameters.size() != 3) {
+            //not the correct amount of args
+            return "Wrong Amount of args";
+        }
+        //first input in the split array is the command
+        if (!commandWithRenameParameters.get(0).equals(ProtocolsAndResponses.Protocols.RENAMEACCOUNT)) {
+            //Somehow the wrong command came in here
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+        // next inputs are old and new account names
+        String oldAccountName = commandWithRenameParameters.get(1);
+        if(oldAccountName.equals("Personal Loan")) {
+            //cannot rename the personal loan account
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+        String newAccountName = commandWithRenameParameters.get(2);
+
+        //get the current users customer object
+        Customer me = newBank.customers.get(customer.getKey());
+        ArrayList<Account> allMyAccounts = me.getAccounts();
+
+        for (Account account : allMyAccounts) {
+            if (account.getAccountName().equals(oldAccountName)) {
+                //we have found the oldAccountName. Set this to the newAccountName
+                account.renameAccount(newAccountName);
+                return ProtocolsAndResponses.Responses.SUCCESS;
+            }
+        }
+        // if we are here, the oldAccountName didn't exist, so return a fail
+        return ProtocolsAndResponses.Responses.FAIL;
+    }
 }

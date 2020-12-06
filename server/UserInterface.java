@@ -30,14 +30,15 @@ public class UserInterface extends Thread {
         this.out.println("*  5)  Pay someone                  *");
         this.out.println("*  6)  Move money between accounts  *");
         this.out.println("*  7)  Apply for personal loan      *");
-        this.out.println("*  8)  Change Password              *");
-        this.out.println("*  9)  Close Account                *");
-        this.out.println("*  10) Exit                         *");
-        this.out.println("*  11) Logout                       *");
+        this.out.println("*  8)  Rename Account               *");
+        this.out.println("*  9)  Change Password              *");
+        this.out.println("*  10) Close Account                *");
+        this.out.println("*  11) Exit                         *");
+        this.out.println("*  12) Logout                       *");
         this.out.println("*                                   *");
         this.out.println("*************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 11)");
+        this.out.println("Enter an option (1 - 12)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -162,6 +163,17 @@ public class UserInterface extends Thread {
                             }
                         }
                     case 8:
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.RENAMEACCOUNT);
+                        out.println();
+                        out.println("Rename Your Account");
+                        out.println("Please enter the account you wish to rename : ");
+                        String accountToRename = in.readLine();
+                        stringArrayList.add(accountToRename.trim());
+                        out.println("Please enter the new name : ");
+                        String newAccountName = in.readLine();
+                        stringArrayList.add(newAccountName.trim());
+                        return stringArrayList;
+                    case 9:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
@@ -169,7 +181,7 @@ public class UserInterface extends Thread {
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);
                         return stringArrayList;
-                    case 9:
+                    case 10:
                         out.println();
                         out.println("Closing an account");
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CLOSEACCOUNT);
@@ -177,25 +189,24 @@ public class UserInterface extends Thread {
                         String accountNameToClose = in.readLine();
                         stringArrayList.add(accountNameToClose);
                         return stringArrayList;
-
-                    case 10:
+                    case 11:
                         out.println("Thank you, and goodbye.");
                         //This will call Exit within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
                         return stringArrayList;
-                    case 11:
+                    case 12:
                         out.println("We are logging you out...");
                         //This will call Logout within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.LOGOUT);
                         return stringArrayList;
                     default:
-                        out.println("Invalid choice, please choose 1 - 11");
+                        out.println("Invalid choice, please choose 1 - 12");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-                out.println("Invalid choice, please choose 1 - 11");
+                out.println("Invalid choice, please choose 1 - 12");
                 menuChoose = false;
             }
         }
