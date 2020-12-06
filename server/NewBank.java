@@ -103,6 +103,9 @@ public class NewBank {
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PLOAN)) {
 				return accountManager.approveOrRejectLoanApplication(customer, request);
 			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.RENAMEACCOUNT)) {
+				return accountManager.renameAccount(customer, request);
+			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
 				return changePassword(customer, request);
 			}

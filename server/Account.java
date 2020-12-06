@@ -29,6 +29,10 @@ public class Account {
 		openingBalance = openingBalance - amount;
 	}
 
+	public void renameAccount(String newAccountName) {
+		this.accountName = newAccountName;
+	}
+
 	public Double getBalance()
 	{
 		return openingBalance;
