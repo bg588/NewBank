@@ -6,6 +6,8 @@ public class Customer {
 	
 	private ArrayList<Account> accounts;
 	private Password password;
+	private DateOfBirth DateOfBirth;
+
 	private boolean locked;
 	private int passwordAttemptsRemaining;
 	
@@ -43,6 +45,16 @@ public class Customer {
 
 	public boolean verifyPassword(String inputPassword) {
 		return password.getPassword().equals(inputPassword);
+	}
+
+	public void setDateOfBirth(String DOB){
+	DateOfBirth.setDateOfBirth(DOB);
+	}
+	public DateOfBirth getDateOfBirth(){
+return DateOfBirth;
+	}
+	public boolean verifyDateOfBirth(String DOB){
+return DateOfBirth.getDateOfBirth().equals(DateOfBirth);
 	}
 
 	public boolean isLocked() {
