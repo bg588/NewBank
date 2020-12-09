@@ -82,6 +82,7 @@ public class UserInterface extends Thread {
                         String withdrawAmount = in.readLine();
                         int withdrawnAmount= Integer.parseInt(withdrawAmount);
                         stringArrayList.add(withdrawAmount);
+                        out.println(withdrawnAmount);
                         return stringArrayList;
                     case 4:
                         out.println();

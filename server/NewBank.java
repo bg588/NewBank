@@ -1,6 +1,5 @@
 package server;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -8,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NewBank {
-	
+
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private Persister persister;
@@ -42,7 +41,7 @@ public class NewBank {
 		john.setPassword("password");
 		customers.put("John", john);
 	}
-	
+
 	public static NewBank getBank() {
 		return bank;
 	}
@@ -107,7 +106,7 @@ public class NewBank {
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
-	
+
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
@@ -168,12 +167,50 @@ public class NewBank {
 		return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
 	}
 
-	private String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount){
+    private String withdrawFromAccount(CustomerID customer, List<String> withdrawFromAccount) {
+        if (withdrawFromAccount.size() != 3) {
+            return "Wrong Amount of args";
+        }
 
-	}
+        if (!withdrawFromAccount.get(0).equals(ProtocolsAndResponses.Protocols.WITHDRAW)) {
 
-	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
-	private String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+        if (withdrawFromAccount.get(1).equals("")) {
+
+            return "Account name cannot be blank";
+        }
+        double withdrawAmount;
+        try {
+
+            withdrawAmount = roundDouble(Double.parseDouble(withdrawFromAccount.get(2)), 2);
+        } catch (NumberFormatException ex) {
+            return " withdraw amount could not be converted to a valid number";
+        }
+        if (withdrawAmount <= 0.009) {
+
+            return "Cannot withdraw less than 0.01";
+        }
+        //get the current users customer object
+        var cust = customers.get(customer.getKey());
+        //get the current users list of accounts
+        var custAccounts = cust.getAccounts();
+		String intendedWithdrawAccount = withdrawFromAccount.get(1);
+
+		for (Account acc1 : custAccounts) {
+			if (acc1.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
+				var priorBal = acc1.getBalance();
+				acc1.reduceBalance(withdrawAmount);
+				var newBal = priorBal-withdrawAmount;
+				return "SUCCESS\n" + "AccountName:"+acc1.getAccountName()+" Withdrawn:"+withdrawAmount+" NewBalance:"+newBal;
+			}
+			return "Cannot withdraw from an account that does not exist. Please create account first";
+		}
+		return ProtocolsAndResponses.Responses.FAIL;
+    }
+
+    //this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
+    private String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
 
 		if (commandWithExistingAccountNameAndDepositAmount.size() != 3) {
 			//not the correct amount of args
