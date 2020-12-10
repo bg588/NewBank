@@ -41,6 +41,7 @@ public class Persister {
             Customer customer = customers.get(customersKey);
             // add password to the line
             line += customer.getPassword().getPassword();
+            line+= customer.getDateOfBirth().getDateOfBirth();
             // get the list of accounts for this customer
             ArrayList<Account> accounts = customer.getAccounts();
             // then loop through them
@@ -81,6 +82,7 @@ public class Persister {
                 Customer customer = new Customer();
                 // set the password for the customer
                 customer.setPassword(results[1]);
+                customer.setDateOfBirth(results[2]);
                 for (int i = 2; i < results.length - 1; i = i + 2) {
                     // each remaining entry on this is an account/balance, add account name, and account balance to
                     // customer object

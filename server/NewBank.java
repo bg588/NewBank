@@ -29,16 +29,19 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
+		bhagy.setDateOfBirth("01-01-2020");
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("password");
+		christina.setDateOfBirth("01-01-2020");
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		john.setPassword("password");
+		john.setDateOfBirth("01-01-2020");
 		customers.put("John", john);
 	}
 
@@ -46,7 +49,7 @@ public class NewBank {
 		return bank;
 	}
 
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+	public synchronized CustomerID checkLogInDetails(String userName, String password, String dateOfBirth) {
 		if (customers.containsKey(userName)) {
 			// create CustomerID as username exists
 			CustomerID customerID = new CustomerID(userName);
@@ -65,6 +68,10 @@ public class NewBank {
 				// password matches, set CustomerID as authenticated
 				customerID.setAuthenticated(true);
 				// return customerID to allow login
+				return customerID;
+			}
+			if(customer.verifyDateOfBirth(dateOfBirth)){
+				customerID.setAuthenticated(true);
 				return customerID;
 			}
 			// user exists, password does not match - increment failedPasswordAttempt counter on customer

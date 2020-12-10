@@ -1,15 +1,15 @@
 package server;
 
 public class DateOfBirth {
-    private String DateOfBirth;
+    private String dateOfBirth;
     public DateOfBirth() {
     }
 
     public String getDateOfBirth() {
-        return DateOfBirth;
+        return dateOfBirth;
     }
 
-    public void setDateOfBirth(String DateOfBirth) {
-        this.DateOfBirth = DateOfBirth;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

@@ -45,11 +45,13 @@ public class NewBankClientHandler extends Thread{
 			// ask for password
 			out.println("Enter Password");
 			String password = in.readLine();
+			out.println("Enter your date of birth in format DD-MM-YY");
+			String dateOfBirth =in.readLine();
 			out.println("Checking Details...");
 			//Server Message
 			System.out.println(timeStamp() +"Attempted login by " +userName) ;
 			// authenticate user and get customer ID token from bank for use in subsequent requests
-			CustomerID customerID = bank.checkLogInDetails(userName, password);
+			CustomerID customerID = bank.checkLogInDetails(userName, password,dateOfBirth);
 			if (customerID != null && customerID.isLocked()) {
 				//customer exists, but account is locked
 				out.println("Your account has been locked. Please contact customer services");
