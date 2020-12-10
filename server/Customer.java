@@ -1,6 +1,9 @@
 package server;
 
 import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Customer {
 	
@@ -54,13 +57,10 @@ public class Customer {
 	public DateOfBirth getDateOfBirth(){
 	return dateOfBirth;
 	}
-	//@Override
+
 	public boolean verifyDateOfBirth(String DOB){
 	return dateOfBirth.getDateOfBirth().equals(DOB);
-
-		}
-
-
+	}
 
 	public boolean isLocked() {
 		return locked;
