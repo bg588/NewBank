@@ -29,16 +29,22 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
+		bhagy.setEmail("bhagy@bath.ac.uk");
+		bhagy.setPhone("07788999000");
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("password");
+		christina.setEmail("christina@bath.ac.uk");
+		christina.setPhone("07788999001");
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		john.setPassword("password");
+		john.setEmail("john@bath.ac.uk");
+		john.setPhone("07788999002");
 		customers.put("John", john);
 	}
 	
@@ -102,6 +108,9 @@ public class NewBank {
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PLOAN)) {
 				return accountManager.approveOrRejectLoanApplication(customer, request);
+			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.SHOWPINFO)) {
+				return accountManager.showPersonalInfo(customer);
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
 				return changePassword(customer, request);

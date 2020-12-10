@@ -112,6 +112,9 @@ public class NewBankAccountManager {
     public String showMyAccounts(CustomerID customer) {
         return (newBank.customers.get(customer.getKey())).accountsToString();
     }
+    public String showPersonalInfo(CustomerID customer) {
+        return "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
+    }
 
     public String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
         var myName = customer.getKey();
