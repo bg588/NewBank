@@ -1,9 +1,5 @@
 package server;
 
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,11 +129,6 @@ public class NewBank {
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
-
-	private String showMyAccounts(CustomerID customer) {
-		return (customers.get(customer.getKey())).accountsToString();
-	}
-
 	private String changePassword(CustomerID customerID,  List<String> newPassword) {
 		Customer me = customers.get(customerID.getKey());
 		if (me.changePassword(newPassword.get(1))) {
@@ -145,7 +136,6 @@ public class NewBank {
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
 		return ProtocolsAndResponses.Responses.FAIL + " " + ProtocolsAndResponses.Responses.PWRULES;
-
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story

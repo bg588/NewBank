@@ -136,7 +136,7 @@ public class NewBankAccountManager {
             if (acc.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
                 Double priorBal = acc.getBalance();
                 acc.reduceBalance(withdrawAmount);
-                Double newBal = priorBal-withdrawAmount;
+                Double newBal = priorBal - withdrawAmount;
                 return "SUCCESS\n" + "AccountName:" + acc.getAccountName() + " Withdrawn:" + withdrawAmount + " NewBalance:" + newBal;
             }
         }
