@@ -1,5 +1,9 @@
 package server;
 
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +48,12 @@ public class NewBank {
 		john.setDateOfBirth("01-01-1990");
 		customers.put("John", john);
 	}
-	
+
 	public static NewBank getBank() {
 		return bank;
 	}
 
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+	public synchronized CustomerID checkLogInDetails(String userName, String password, String dateOfBirth) {
 		if (customers.containsKey(userName)) {
 			// create CustomerID as username exists
 			CustomerID customerID = new CustomerID(userName);
@@ -68,6 +72,10 @@ public class NewBank {
 				// password matches, set CustomerID as authenticated
 				customerID.setAuthenticated(true);
 				// return customerID to allow login
+				return customerID;
+			}
+			if(customer.verifyDateOfBirth(dateOfBirth)){
+				customerID.setAuthenticated(true);
 				return customerID;
 			}
 			// user exists, password does not match - increment failedPasswordAttempt counter on customer
@@ -96,6 +104,9 @@ public class NewBank {
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return accountManager.showMyAccounts(customer);
+			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+				return accountManager.withdrawFromAccount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
 				return accountManager.payPersonOrCompanyAnAmount(customer, request);
@@ -129,6 +140,10 @@ public class NewBank {
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
+
+	private String showMyAccounts(CustomerID customer) {
+		return (customers.get(customer.getKey())).accountsToString();
+
 	private String changePassword(CustomerID customerID,  List<String> newPassword) {
 		Customer me = customers.get(customerID.getKey());
 		if (me.changePassword(newPassword.get(1))) {
@@ -136,6 +151,7 @@ public class NewBank {
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
 		return ProtocolsAndResponses.Responses.FAIL + " " + ProtocolsAndResponses.Responses.PWRULES;
+
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
@@ -160,20 +176,16 @@ public class NewBank {
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 
 		if (accountToClose != null) {
-
-			if(accountToClose.getBalance()==0){
+			if(accountToClose.getBalance() == 0) {
 			//an account exists, so remove it
 				accounts.remove(accountToClose);
 				return "SUCCESS\n" + "Account "+accountToClose+" has been closed successfully";
-			} else{
-			return "You still have an account balance of "+accountToClose.getBalance()+"\nPlease withdraw the amount first";
+			} else {
+			  return "You still have an account balance of "+accountToClose.getBalance()+"\nPlease withdraw the amount first";
 			}
-
-		}else{
+		} else {
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
-
-
 	}
 
 	private String mainMenu() {

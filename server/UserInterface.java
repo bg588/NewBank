@@ -18,6 +18,7 @@ public class UserInterface extends Thread {
 
     public void printMenu() {
         this.out.println();
+
         this.out.println("*************************************");
         this.out.println("*     Welcome to NewBank Online     *");
         this.out.println("*************************************");
@@ -82,6 +83,9 @@ public class UserInterface extends Thread {
                         String withdrawAmount = in.readLine();
                         int withdrawnAmount= Integer.parseInt(withdrawAmount);
                         stringArrayList.add(withdrawAmount);
+
+                        out.println(withdrawnAmount);
+
                         return stringArrayList;
                     case 4:
                         out.println();
@@ -120,6 +124,7 @@ public class UserInterface extends Thread {
                         stringArrayList.add(transferTo);
                         return stringArrayList;
                     case 7:
+
                         while (true) {
                             stringArrayList.add(ProtocolsAndResponses.Protocols.PLOAN);//command item 1
                             out.println();
@@ -196,18 +201,25 @@ public class UserInterface extends Thread {
                         stringArrayList.add(ProtocolsAndResponses.Protocols.LOGOUT);
                         return stringArrayList;
                     case 12:
+
                         out.println("Thank you, and goodbye.");
                         //This will call Exit within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
                         return stringArrayList;
                     default:
+
+
                         out.println("Invalid choice, please choose 1 - 12");
+
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
+
+
                 out.println("Invalid choice, please choose 1 - 12");
+
                 menuChoose = false;
             }
         }

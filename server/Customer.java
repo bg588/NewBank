@@ -1,6 +1,9 @@
 package server;
 
 import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Customer {
 	
@@ -70,7 +73,18 @@ public class Customer {
 	}
 
 	public boolean verifyPassword(String inputPassword) {
-		return password.getPassword().equals(inputPassword);
+			return password.getPassword().equals(inputPassword);
+	}
+
+	public void setDateOfBirth(String DOB){
+	dateOfBirth.setDateOfBirth(DOB);
+	}
+	public DateOfBirth getDateOfBirth(){
+	return dateOfBirth;
+	}
+
+	public boolean verifyDateOfBirth(String DOB){
+	return dateOfBirth.getDateOfBirth().equals(DOB);
 	}
 
 	public boolean isLocked() {

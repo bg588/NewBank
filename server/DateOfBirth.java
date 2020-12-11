@@ -3,7 +3,7 @@ package server;
 public class DateOfBirth {
     private String dateOfBirth;
 
-    public DateOfBirth() {
+  public DateOfBirth() {
     }
 
     public String getDateOfBirth() {
