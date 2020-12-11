@@ -64,14 +64,6 @@ public class Customer {
 		return password;
 	}
 
-	public void setDateOfBirth(String DOB) {
-		dateOfBirth.setDateOfBirth(DOB);
-	}
-
-	public DateOfBirth getDateOfBirth() {
-		return dateOfBirth;
-	}
-
 	public boolean verifyPassword(String inputPassword) {
 			return password.getPassword().equals(inputPassword);
 	}
@@ -79,12 +71,9 @@ public class Customer {
 	public void setDateOfBirth(String DOB){
 	dateOfBirth.setDateOfBirth(DOB);
 	}
+
 	public DateOfBirth getDateOfBirth(){
 	return dateOfBirth;
-	}
-
-	public boolean verifyDateOfBirth(String DOB){
-	return dateOfBirth.getDateOfBirth().equals(DOB);
 	}
 
 	public boolean isLocked() {

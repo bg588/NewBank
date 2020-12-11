@@ -53,7 +53,7 @@ public class NewBank {
 		return bank;
 	}
 
-	public synchronized CustomerID checkLogInDetails(String userName, String password, String dateOfBirth) {
+	public synchronized CustomerID checkLogInDetails(String userName, String password) {
 		if (customers.containsKey(userName)) {
 			// create CustomerID as username exists
 			CustomerID customerID = new CustomerID(userName);
@@ -72,10 +72,6 @@ public class NewBank {
 				// password matches, set CustomerID as authenticated
 				customerID.setAuthenticated(true);
 				// return customerID to allow login
-				return customerID;
-			}
-			if(customer.verifyDateOfBirth(dateOfBirth)){
-				customerID.setAuthenticated(true);
 				return customerID;
 			}
 			// user exists, password does not match - increment failedPasswordAttempt counter on customer
@@ -104,9 +100,6 @@ public class NewBank {
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return accountManager.showMyAccounts(customer);
-			}
-			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
-				return accountManager.withdrawFromAccount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
 				return accountManager.payPersonOrCompanyAnAmount(customer, request);
@@ -143,6 +136,7 @@ public class NewBank {
 
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
+	}
 
 	private String changePassword(CustomerID customerID,  List<String> newPassword) {
 		Customer me = customers.get(customerID.getKey());
