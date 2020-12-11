@@ -32,14 +32,15 @@ public class UserInterface extends Thread {
         this.out.println("*  6)  Move money between accounts  *");
         this.out.println("*  7)  Apply for personal loan      *");
         this.out.println("*  8)  Rename Account               *");
-        this.out.println("*  9)  Change Password              *");
-        this.out.println("*  10) Close Account                *");
-        this.out.println("*  11) Logout                       *");
-        this.out.println("*  12) Exit                         *");
+        this.out.println("*  9)  Check personal details       *");  
+        this.out.println("*  10) Change Password              *");
+        this.out.println("*  11) Close Account                *");
+        this.out.println("*  12) Logout                       *");
+        this.out.println("*  13) Exit                         *");
         this.out.println("*                                   *");
         this.out.println("*************************************");
         this.out.println();
-        this.out.println("Enter an option (1 - 12)");
+        this.out.println("Enter an option (1 - 13)");
     }
 
     public ArrayList<String> getMenuOption() {
@@ -178,7 +179,12 @@ public class UserInterface extends Thread {
                         String newAccountName = in.readLine();
                         stringArrayList.add(newAccountName.trim());
                         return stringArrayList;
-                    case 9:
+                    case 9:                    
+                        out.println();
+                        out.println("Showing Personal Info:");
+                        stringArrayList.add(ProtocolsAndResponses.Protocols.SHOWPINFO);
+                        return stringArrayList;
+                    case 10:
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CHANGEPW);
                         out.println();
                         out.println("Change your password");
@@ -187,7 +193,7 @@ public class UserInterface extends Thread {
                         String newPassword = in.readLine();
                         stringArrayList.add(newPassword);
                         return stringArrayList;
-                    case 10:
+                    case 11:
                         out.println();
                         out.println("Closing an account");
                         stringArrayList.add(ProtocolsAndResponses.Protocols.CLOSEACCOUNT);
@@ -195,31 +201,24 @@ public class UserInterface extends Thread {
                         String accountNameToClose = in.readLine();
                         stringArrayList.add(accountNameToClose);
                         return stringArrayList;
-                    case 11:
+                    case 12:
                         out.println("We are logging you out...");
                         //This will call Logout within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.LOGOUT);
                         return stringArrayList;
-                    case 12:
-
+                    case 13:
                         out.println("Thank you, and goodbye.");
                         //This will call Exit within NewBank , which saves the csv file
                         stringArrayList.add(ProtocolsAndResponses.Protocols.EXIT);
-                        return stringArrayList;
+                        return stringArrayList;                   
                     default:
-
-
-                        out.println("Invalid choice, please choose 1 - 12");
-
+                        out.println("Invalid choice, please choose 1 - 13");
                         menuChoose = false;
                 }
                 //out.println(myOption);
             } catch (Exception e) {
                 out.println(e.getMessage());
-
-
-                out.println("Invalid choice, please choose 1 - 12");
-
+                out.println("Invalid choice, please choose 1 - 13");
                 menuChoose = false;
             }
         }
