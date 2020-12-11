@@ -104,9 +104,45 @@ public class NewBankAccountManager {
                 "Please create account first or choose from the available accounts: %s", intendedDepositAccount, accountNames);
     }
 
-    public String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount){
+    public String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount) {
 
-        return null;
+        if (withdrawFromAccount.size() != 3) {
+            return "Wrong Amount of args";
+        }
+
+        if (!withdrawFromAccount.get(0).equals(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+
+        if (withdrawFromAccount.get(1).equals("")) {
+            return "Account name cannot be blank";
+        }
+        double withdrawAmount;
+        try {
+
+            withdrawAmount = roundDouble(Double.parseDouble(withdrawFromAccount.get(2)), 2);
+        } catch (NumberFormatException ex) {
+            return " withdraw amount could not be converted to a valid number";
+        }
+        if (withdrawAmount <= 0.009) {
+            return "Cannot withdraw less than 0.01";
+        }
+        //get the current users customer object
+        var cust = newBank.customers.get(customer.getKey());
+        //get the current users list of accounts
+        var custAccounts = cust.getAccounts();
+        String intendedWithdrawAccount = withdrawFromAccount.get(1);
+
+        for (Account acc1 : custAccounts) {
+            if (acc1.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
+                var priorBal = acc1.getBalance();
+                acc1.reduceBalance(withdrawAmount);
+                var newBal = priorBal-withdrawAmount;
+                return "SUCCESS\n" + "AccountName:"+acc1.getAccountName()+" Withdrawn:"+withdrawAmount+" NewBalance:"+newBal;
+            }
+            return "Cannot withdraw from an account that does not exist. Please create account first";
+        }
+        return ProtocolsAndResponses.Responses.FAIL;
     }
 
     public String showMyAccounts(CustomerID customer) {
