@@ -119,7 +119,6 @@ public class NewBankAccountManager {
         }
         double withdrawAmount;
         try {
-
             withdrawAmount = roundDouble(Double.parseDouble(withdrawFromAccount.get(2)), 2);
         } catch (NumberFormatException ex) {
             return " withdraw amount could not be converted to a valid number";
@@ -128,21 +127,20 @@ public class NewBankAccountManager {
             return "Cannot withdraw less than 0.01";
         }
         //get the current users customer object
-        var cust = newBank.customers.get(customer.getKey());
+        Customer cust = newBank.customers.get(customer.getKey());
         //get the current users list of accounts
         var custAccounts = cust.getAccounts();
         String intendedWithdrawAccount = withdrawFromAccount.get(1);
 
-        for (Account acc1 : custAccounts) {
-            if (acc1.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
-                var priorBal = acc1.getBalance();
-                acc1.reduceBalance(withdrawAmount);
-                var newBal = priorBal-withdrawAmount;
-                return "SUCCESS\n" + "AccountName:"+acc1.getAccountName()+" Withdrawn:"+withdrawAmount+" NewBalance:"+newBal;
+        for (Account acc : custAccounts) {
+            if (acc.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
+                Double priorBal = acc.getBalance();
+                acc.reduceBalance(withdrawAmount);
+                Double newBal = priorBal-withdrawAmount;
+                return "SUCCESS\n" + "AccountName:" + acc.getAccountName() + " Withdrawn:" + withdrawAmount + " NewBalance:" + newBal;
             }
-            return "Cannot withdraw from an account that does not exist. Please create account first";
         }
-        return ProtocolsAndResponses.Responses.FAIL;
+        return ProtocolsAndResponses.Responses.FAIL + "Cannot withdraw from an account that does not exist. Please create account first";
     }
 
     public String showMyAccounts(CustomerID customer) {
