@@ -1,5 +1,9 @@
 package server;
 
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,24 +33,27 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
+		bhagy.setDateOfBirth("01-01-2020");
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("password");
+		christina.setDateOfBirth("01-01-2020");
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		john.setPassword("password");
+		john.setDateOfBirth("01-01-2020");
 		customers.put("John", john);
 	}
-	
+
 	public static NewBank getBank() {
 		return bank;
 	}
 
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+	public synchronized CustomerID checkLogInDetails(String userName, String password, String dateOfBirth) {
 		if (customers.containsKey(userName)) {
 			// create CustomerID as username exists
 			CustomerID customerID = new CustomerID(userName);
@@ -65,6 +72,10 @@ public class NewBank {
 				// password matches, set CustomerID as authenticated
 				customerID.setAuthenticated(true);
 				// return customerID to allow login
+				return customerID;
+			}
+			if(customer.verifyDateOfBirth(dateOfBirth)){
+				customerID.setAuthenticated(true);
 				return customerID;
 			}
 			// user exists, password does not match - increment failedPasswordAttempt counter on customer
@@ -93,6 +104,9 @@ public class NewBank {
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
 				return accountManager.showMyAccounts(customer);
+			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+				return withdrawFromAccount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
 				return accountManager.payPersonOrCompanyAnAmount(customer, request);
@@ -126,6 +140,10 @@ public class NewBank {
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
+
+	private String showMyAccounts(CustomerID customer) {
+		return (customers.get(customer.getKey())).accountsToString();
+
 	private String changePassword(CustomerID customerID,  List<String> newPassword) {
 		Customer me = customers.get(customerID.getKey());
 		if (me.changePassword(newPassword.get(1))) {
@@ -133,6 +151,7 @@ public class NewBank {
 			return ProtocolsAndResponses.Responses.SUCCESS;
 		}
 		return ProtocolsAndResponses.Responses.FAIL + " " + ProtocolsAndResponses.Responses.PWRULES;
+
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
@@ -156,7 +175,54 @@ public class NewBank {
 		Account accountToClose = me.getAccountWithName(commandWithAccountNameAndDepositAmount.get(1));
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 
+
+    private String withdrawFromAccount(CustomerID customer, List<String> withdrawFromAccount) {
+        if (withdrawFromAccount.size() != 3) {
+            return "Wrong Amount of args";
+        }
+
+        if (!withdrawFromAccount.get(0).equals(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+        if (withdrawFromAccount.get(1).equals("")) {
+
+            return "Account name cannot be blank";
+        }
+        double withdrawAmount;
+        try {
+
+            withdrawAmount = roundDouble(Double.parseDouble(withdrawFromAccount.get(2)), 2);
+        } catch (NumberFormatException ex) {
+            return " withdraw amount could not be converted to a valid number";
+        }
+        if (withdrawAmount <= 0.009) {
+
+            return "Cannot withdraw less than 0.01";
+        }
+        //get the current users customer object
+        var cust = customers.get(customer.getKey());
+        //get the current users list of accounts
+        var custAccounts = cust.getAccounts();
+		String intendedWithdrawAccount = withdrawFromAccount.get(1);
+
+		for (Account acc1 : custAccounts) {
+			if (acc1.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
+				var priorBal = acc1.getBalance();
+				acc1.reduceBalance(withdrawAmount);
+				var newBal = priorBal-withdrawAmount;
+				return "SUCCESS\n" + "AccountName:"+acc1.getAccountName()+" Withdrawn:"+withdrawAmount+" NewBalance:"+newBal;
+			}
+			return "Cannot withdraw from an account that does not exist. Please create account first";
+		}
+		return ProtocolsAndResponses.Responses.FAIL;
+    }
+
+    //this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
+    private String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
+
 		if (accountToClose != null) {
+
 
 			if(accountToClose.getBalance()==0){
 			//an account exists, so remove it
