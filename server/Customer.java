@@ -10,14 +10,13 @@ public class Customer {
 	private ArrayList<Account> accounts;
 	private Password password;
 	private DateOfBirth dateOfBirth;
-
 	private boolean locked;
 	private int passwordAttemptsRemaining;
 	
 	public Customer() {
 		accounts = new ArrayList<>();
 		password = new Password();
-		dateOfBirth= new DateOfBirth();
+		dateOfBirth = new DateOfBirth();
 		locked = false;
 		passwordAttemptsRemaining = 3;
 	}
@@ -63,6 +62,14 @@ public class Customer {
 
 	public Password getPassword() {
 		return password;
+	}
+
+	public void setDateOfBirth(String DOB) {
+		dateOfBirth.setDateOfBirth(DOB);
+	}
+
+	public DateOfBirth getDateOfBirth() {
+		return dateOfBirth;
 	}
 
 	public boolean verifyPassword(String inputPassword) {

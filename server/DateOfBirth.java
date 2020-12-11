@@ -2,7 +2,8 @@ package server;
 
 public class DateOfBirth {
     private String dateOfBirth;
-    public DateOfBirth() {
+
+  public DateOfBirth() {
     }
 
     public String getDateOfBirth() {
@@ -12,5 +13,4 @@ public class DateOfBirth {
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-
 }
