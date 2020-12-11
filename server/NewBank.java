@@ -1,7 +1,9 @@
 package server;
 
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +11,9 @@ import java.util.List;
 public class NewBank {
 
 	private static final NewBank bank = new NewBank();
-	private HashMap<String,Customer> customers;
-	private Persister persister;
+	public HashMap<String,Customer> customers;
+	public Persister persister;
+	private NewBankAccountManager accountManager;
 
 	private NewBank() {
 		customers = new HashMap<>();
@@ -23,6 +26,7 @@ public class NewBank {
 			// this could potentially be moved later to the Persister to tidy things up
 			addTestData();
 		}
+		accountManager = new NewBankAccountManager(this);
 	}
 
 	private void addTestData() {
@@ -90,45 +94,76 @@ public class NewBank {
 	public synchronized String processRequest(CustomerID customer, ArrayList<String> request) {
 		if (customers.containsKey(customer.getKey())) {
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
-				return addNewAccount(customer, request);
+				return accountManager.addNewAccount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.DEPOSIT)) {
-				return depositToExistingAccount(customer, request);
+				return accountManager.depositToExistingAccount(customer, request);
+			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+				return accountManager.withdrawFromAccount(customer, request);
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
+				return accountManager.showMyAccounts(customer);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.WITHDRAW)) {
 				return withdrawFromAccount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PAY)) {
-				return payPersonOrCompanyAnAmount(customer, request);
+				return accountManager.payPersonOrCompanyAnAmount(customer, request);
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.MOVE)) {
-				return moveAnAmountFromOneAccountToAnother(customer, request);
+				return accountManager.moveAnAmountFromOneAccountToAnother(customer, request);
 			}
-			if (request.get(0).equals(ProtocolsAndResponses.Protocols.SHOWMYACCOUNTS)) {
-				return showMyAccounts(customer);
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.PLOAN)) {
+				return accountManager.approveOrRejectLoanApplication(customer, request);
+			}
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.RENAMEACCOUNT)) {
+				return accountManager.renameAccount(customer, request);
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
+				return changePassword(customer, request);
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CLOSEACCOUNT)) {
+				return closeAccount(customer, request);
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.EXIT)) {
 				return exit();
 			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.LOGOUT)) {
+				return logOut();
+			}
+			if (request.get(0).equals(ProtocolsAndResponses.Protocols.MAINMENU)) {
+				return mainMenu();
+			}
+
 		}
 		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
+
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
+
+	private String changePassword(CustomerID customerID,  List<String> newPassword) {
+		Customer me = customers.get(customerID.getKey());
+		if (me.changePassword(newPassword.get(1))) {
+			// this returns success if new password is accepted (conditions defined within Password class)
+			return ProtocolsAndResponses.Responses.SUCCESS;
+		}
+		return ProtocolsAndResponses.Responses.FAIL + " " + ProtocolsAndResponses.Responses.PWRULES;
+
 	}
 
 	//this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
-	private String addNewAccount(CustomerID customer, List<String> commandWithAccountNameAndDepositAmount) {
-		Customer myCurrentCustomer = customers.get(customer.getKey());
+	private String closeAccount(CustomerID customer, List<String> commandWithAccountNameAndDepositAmount) {
+		//Customer myCurrentCustomer = customers.get(customer.getKey());
 		//flatten the list after the first split
-//		var flattenlist = "";
-		if (commandWithAccountNameAndDepositAmount.size() != 3) {
+		if (commandWithAccountNameAndDepositAmount.size() != 2) {
 			//not the correct amount of args
 			return "Wrong Amount of args";
 		}
 		//first input in the split array is the command
-		if(!commandWithAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
+		if(!commandWithAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.CLOSEACCOUNT)) {
 			//Somehow the wrong command came in here
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
@@ -136,43 +171,10 @@ public class NewBank {
 			//account name cannot be blank
 			return "Account name cannot be blank";
 		}
-		//var accountToDeposit = commandWithAccountNameAndDepositAmount.get(1);
-		double amountToDeposit;
-		try {
-			//next input in the split array must be the amount
-			//uses big decimal to keep to 2 decimal places
-			amountToDeposit = roundDouble(Double.parseDouble(commandWithAccountNameAndDepositAmount.get(2)), 2);
-		}
-		catch (NumberFormatException ex) {
-			return "deposit amount could not be converted to a valid number";
-		}
-		if(amountToDeposit <= 0.009) {
-			//cannot pay someone less that 0.01 wtv currency
-			return "Cannot deposit less than 0.01";
-		}
-
-//		for (String value : commandWithAccountNameAndDepositAmount) {
-//			if (value.equals(ProtocolsAndResponses.Protocols.NEWACCOUNT)) {
-//				continue;
-//			}
-//			flattenlist += value;
-//		}
-		//check the length of the remaining String passed in breaks the limit
-//		if (flattenlist.length() > 10 || flattenlist.isEmpty() || flattenlist.isBlank()) {
-//			return ProtocolsAndResponses.Responses.FAIL;
-//		}
+		Customer me = customers.get(customer.getKey());
+		Account accountToClose = me.getAccountWithName(commandWithAccountNameAndDepositAmount.get(1));
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
-		for (Account acc : accounts) {
-			if (acc.getAccountName().equalsIgnoreCase(commandWithAccountNameAndDepositAmount.get(1))) {
-				return "There is already an existing account";
-			}
-		}
-		Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit);
-		myCurrentCustomer.addAccount(theNewAccount);
 
-//		return ProtocolsAndResponses.Responses.SUCCESS;
-		return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
-	}
 
     private String withdrawFromAccount(CustomerID customer, List<String> withdrawFromAccount) {
         if (withdrawFromAccount.size() != 3) {
@@ -219,201 +221,26 @@ public class NewBank {
     //this will move to public once we tie in "Improve Command Line Interface to a menu based system" story
     private String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
 
-		if (commandWithExistingAccountNameAndDepositAmount.size() != 3) {
-			//not the correct amount of args
-			return "Wrong Amount of args";
-		}
-		//first input in the split array is the command
-		if(!commandWithExistingAccountNameAndDepositAmount.get(0).equals(ProtocolsAndResponses.Protocols.DEPOSIT)) {
-			//Somehow the wrong command came in here
+		if (accountToClose != null) {
+
+
+			if(accountToClose.getBalance()==0){
+			//an account exists, so remove it
+				accounts.remove(accountToClose);
+				return "SUCCESS\n" + "Account "+accountToClose+" has been closed successfully";
+			} else{
+			return "You still have an account balance of "+accountToClose.getBalance()+"\nPlease withdraw the amount first";
+			}
+
+		}else{
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
-		if (commandWithExistingAccountNameAndDepositAmount.get(1).equals("")) {
-			//account name cannot be blank
-			return "Account name cannot be blank";
-		}
-		//var accountToDeposit = commandWithAccountNameAndDepositAmount.get(1);
-		double amountToDepositToExistingAccount;
-		try {
-			//next input in the split array must be the amount
-			//uses big decimal to keep to 2 decimal places
-			amountToDepositToExistingAccount = roundDouble(Double.parseDouble(commandWithExistingAccountNameAndDepositAmount.get(2)), 2);
-		}
-		catch (NumberFormatException ex) {
-			return "deposit amount could not be converted to a valid number";
-		}
-		if(amountToDepositToExistingAccount <= 0.009) {
-			//cannot pay someone less that 0.01 wtv currency
-			return "Cannot deposit less than 0.01";
-		}
-		//get the current users customer object
-		var me = customers.get(customer.getKey());
-		//get the current users list of accounts
-		var myAccounts = me.getAccounts();
 
-		String intendedDepositAccount = commandWithExistingAccountNameAndDepositAmount.get(1);
 
-		for (Account acc : myAccounts) {
-			if (acc.getAccountName().equalsIgnoreCase(intendedDepositAccount)) {
-				var priorBal = acc.getBalance();
-				acc.addMoneyToAccount(amountToDepositToExistingAccount);
-				var newBal = priorBal+amountToDepositToExistingAccount;
-				return "SUCCESS\n" + "AccountName:"+acc.getAccountName()+" Deposited:"+amountToDepositToExistingAccount+" NewBalance:"+newBal;
-			}
-			return "Cannot deposit to an account that does not exist. Please create account first";
-		}
-		return ProtocolsAndResponses.Responses.FAIL;
 	}
 
-
-	private String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
-		var myName = customer.getKey();
-        if (commandWithPayeeAndAmount.size() != 3) {
-			//not the correct amount of args
-			return "Wrong Amount of args";
-		}
-        //first input in the split array is the command
-		if(!commandWithPayeeAndAmount.get(0).equals(ProtocolsAndResponses.Protocols.PAY)) {
-			//Somehow the wrong command came in here
-			return ProtocolsAndResponses.Responses.FAIL;
-		}
-		//next input in the split array must be payee
-		//this code will break once we have a protocol that can create customer names with spaces in them
-		// This must be future work as it will be a UI change to take the parameters in steps
-		var personOrCompanyToPay = commandWithPayeeAndAmount.get(1);
-		double amountToPay;
-		try {
-			//next input in the split array must be the amount
-			//uses big decimal to keep to 2 decimal places
-			amountToPay = roundDouble(Double.parseDouble(commandWithPayeeAndAmount.get(2)), 2);
-		}
-		catch (NumberFormatException ex) {
-			return "payable amount could not be converted to a valid number";
-		}
-		if(amountToPay <= 0.009) {
-			//cannot pay someone less that 0.01 wtv currency
-			return "Cannot pay someone less than 0.01";
-		}
-		if(personOrCompanyToPay.equalsIgnoreCase(myName)) {
-			//cannot pay myself
-			return "Cannot pay yourself";
-		}
-		//this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
-		for (String customerName: customers.keySet()) {
-			//when we reach the customer we want to pay
-			if (personOrCompanyToPay.equalsIgnoreCase(customerName)) {
-				//we pull out the customer object based on the name we matched above
-				var payee = customers.get(customerName);
-				//we get the customers accounts
-				ArrayList<Account> PayeeAccounts = payee.getAccounts();
-
-				//get the current users customer object
-				var me = customers.get(customer.getKey());
-				//get the current users list of accounts
-				var myAccounts = me.getAccounts();
-
-				//cycle through the user accounts to find one with enough money in it
-				for (Account account : myAccounts) {
-					if (account.getBalance() >= amountToPay) {
-						//yay this account has enough - reduce my balance and pay the person
-						account.reduceBalance(amountToPay);
-						PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
-						return "SUCCESS\n" + "NewBalance:"+account.getAccountName()+" "+account.getBalance().toString();
-					}
-				}
-				break;
-			}
-		}
-		Customer me = customers.get(customer.getKey());
-		ArrayList<Account> allMyAccounts = me.getAccounts();
-
-		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
-		for (Account myAccount : allMyAccounts) {
-			listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
-		}
-		StringBuffer sb = new StringBuffer();
-		for(Account eachItemInArray:listOfMyAccountsAndBalance){
-			sb.append(eachItemInArray);
-			sb.append(" ");
-		}
-		String balance = sb.toString();
-		return "FAIL\n" + "Balance:"+balance;
-	}
-
-	//Based on Ioannis's PAY code
-	private String moveAnAmountFromOneAccountToAnother(CustomerID customer,
-													   List<String> commandWithAmountOriginAccountDestinationAccount) {
-
-		if (commandWithAmountOriginAccountDestinationAccount.size() != 4) {
-			//not the correct amount of args
-			return "Wrong Amount of args";
-		}
-		//first input in the split array is the command
-		if (!commandWithAmountOriginAccountDestinationAccount.get(0).equals(ProtocolsAndResponses.Protocols.MOVE)) {
-			//Somehow the wrong command came in here
-			return ProtocolsAndResponses.Responses.FAIL;
-		}
-		// next input is the amount
-		double amountToMove;
-		try {
-			//next input in the split array must be the amount
-			//uses big decimal to keep to 2 decimal places
-			amountToMove = roundDouble(Double.parseDouble(commandWithAmountOriginAccountDestinationAccount.get(1)), 2);
-		} catch (NumberFormatException ex) {
-			return "payable amount could not be converted to a valid number";
-		}
-
-		if (amountToMove <= 0.009) {
-			//cannot pay someone less that 0.01 wtv currency
-			return "Cannot pay someone less than 0.01";
-		}
-
-		//todo:this code will break once we have a protocol that can create customer names with spaces in them
-		// This must be future work as it will be a UI change to take the parameters in steps
-		//next inputs must be two accounts - we check if they exist later
-		String intendedOriginAccountName = commandWithAmountOriginAccountDestinationAccount.get(2);
-		String intendedDestinationAccountName = commandWithAmountOriginAccountDestinationAccount.get(3);
-
-		if (intendedOriginAccountName.equals(intendedDestinationAccountName)) {
-			//cannot move between the same account
-			return "Cannot move between the same account";
-		}
-
-		Customer me = customers.get(customer.getKey());
-		ArrayList<Account> allMyAccounts = me.getAccounts();
-
-		for (Account originAccount : allMyAccounts) {
-			// looping through all accounts and searching for intendedOriginAccountName
-			if (intendedOriginAccountName.equalsIgnoreCase(originAccount.getAccountName())) {
-				// intendedOriginAccountName is a real account, now check if intendedDestinationAccountName is real
-				for (Account destinationAccount : allMyAccounts) {
-					// looping through all accounts and searching for intendedDestinationAccountName
-					if (intendedDestinationAccountName.equalsIgnoreCase(destinationAccount.getAccountName())) {
-						// Destination account exists - carry out transfer, subject to amount being available
-						if (originAccount.getBalance() >= amountToMove) {
-							// this account has enough
-							// reduce amount from origin account and increase balance in destination account
-							originAccount.reduceBalance(amountToMove);
-							destinationAccount.addMoneyToAccount(amountToMove);
-							return "SUCCESS\n" + "New Balance:"+intendedOriginAccountName + " " + originAccount.getBalance().toString() +
-									" " + intendedDestinationAccountName + " " + destinationAccount.getBalance().toString();
-						}
-					}
-				}
-			}
-		}
-
-		ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
-		for (Account myAccount : allMyAccounts) {
-			listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
-		}
-		StringBuffer sb = new StringBuffer();
-		for(Account eachItemInArray:listOfMyAccountsAndBalance){
-			sb.append(eachItemInArray);
-			sb.append(" ");
-		}
-		String balance = sb.toString();
-		return "FAIL\n" + "Balance:"+balance;
+	private String mainMenu() {
+		return ProtocolsAndResponses.Responses.SUCCESS;
 	}
 
 	private String exit() {
@@ -423,9 +250,11 @@ public class NewBank {
 		return ProtocolsAndResponses.Responses.EXIT;
 	}
 
-	private static double roundDouble(double d, int places) {
-		BigDecimal bigDecimal = new BigDecimal(Double.toString(d));
-		bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
-		return bigDecimal.doubleValue();
+	private String logOut() {
+		// save down data
+		persister.setPersistedData(customers);
+		// return logout
+		return ProtocolsAndResponses.Responses.LOGOUT;
 	}
+
 }

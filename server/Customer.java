@@ -35,12 +35,30 @@ public class Customer {
 		return accounts;
 	}
 
+	public Account getAccountWithName(String nameToSearchFor) {
+		//if an account exists, returns that account
+		for (Account account : accounts) {
+			if (account.getAccountName().equalsIgnoreCase(nameToSearchFor)) {
+				return account;
+			}
+		}
+		return null;
+	}
+
 	public void addAccount(Account account) {
 		accounts.add(account);		
 	}
 
-	public void setPassword(String inputPassword) {
-		password.setPassword(inputPassword);
+	public void removeAccount(Account account) {
+		accounts.remove(account);
+	}
+
+	public void setPassword(String password) {
+		this.password.setPassword(password);
+	}
+
+	public boolean changePassword(String newPassword) {
+		return password.changePassword(newPassword);
 	}
 
 	public Password getPassword() {
