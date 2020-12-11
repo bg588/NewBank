@@ -434,8 +434,7 @@ public class NewBankAccountManager {
             //get first account from client account list and pay loan amount into the account
             Account accountToAddMoneyInto = myAccounts.get(0);
             accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
-
-            return "SUCCESS\n" + "Your New Balance is:" + roundDouble(Double.parseDouble(accountToAddMoneyInto.getAccountName()),2) + " " + accountToAddMoneyInto.getBalance().toString() +
+            return "SUCCESS\n" + "Your New Balance is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
                     "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
 
         }
