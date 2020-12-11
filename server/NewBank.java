@@ -29,16 +29,19 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
+		bhagy.setDateOfBirth("01-01-1990");
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("password");
+		christina.setDateOfBirth("01-01-1990");
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		john.setPassword("password");
+		john.setDateOfBirth("01-01-1990");
 		customers.put("John", john);
 	}
 	
