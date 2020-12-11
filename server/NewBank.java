@@ -31,6 +31,7 @@ public class NewBank {
 		bhagy.setPassword("password");
 		bhagy.setEmail("bhagy@bath.ac.uk");
 		bhagy.setPhone("07788999000");
+		bhagy.setDateOfBirth("01-01-1990");
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
@@ -38,6 +39,7 @@ public class NewBank {
 		christina.setPassword("password");
 		christina.setEmail("christina@bath.ac.uk");
 		christina.setPhone("07788999001");
+		christina.setDateOfBirth("01-01-1990");
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
@@ -45,9 +47,10 @@ public class NewBank {
 		john.setPassword("password");
 		john.setEmail("john@bath.ac.uk");
 		john.setPhone("07788999002");
+		john.setDateOfBirth("01-01-1990");
 		customers.put("John", john);
 	}
-	
+
 	public static NewBank getBank() {
 		return bank;
 	}
@@ -111,6 +114,9 @@ public class NewBank {
 			}
 			if (request.get(0).contains(ProtocolsAndResponses.Protocols.SHOWPINFO)) {
 				return accountManager.showPersonalInfo(customer);
+      }
+			if (request.get(0).contains(ProtocolsAndResponses.Protocols.RENAMEACCOUNT)) {
+				return accountManager.renameAccount(customer, request);
 			}
 			if (request.get(0).equals(ProtocolsAndResponses.Protocols.CHANGEPW)) {
 				return changePassword(customer, request);
@@ -163,20 +169,16 @@ public class NewBank {
 		ArrayList<Account> accounts = customers.get(customer.getKey()).getAccounts();
 
 		if (accountToClose != null) {
-
-			if(accountToClose.getBalance()==0){
+			if(accountToClose.getBalance() == 0) {
 			//an account exists, so remove it
 				accounts.remove(accountToClose);
 				return "SUCCESS\n" + "Account "+accountToClose+" has been closed successfully";
-			} else{
-			return "You still have an account balance of "+accountToClose.getBalance()+"\nPlease withdraw the amount first";
+			} else {
+			  return "You still have an account balance of "+accountToClose.getBalance()+"\nPlease withdraw the amount first";
 			}
-
-		}else{
+		} else {
 			return ProtocolsAndResponses.Responses.FAIL;
 		}
-
-
 	}
 
 	private String mainMenu() {

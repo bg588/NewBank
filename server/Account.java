@@ -16,7 +16,7 @@ public class Account {
 	}
 	
 	public String toString() {
-		return (accountName + " " + openingBalance);
+		return (accountName + " " + NewBankAccountManager.roundDouble(openingBalance,2));
 	}
 
 	public void addMoneyToAccount(double amount)
@@ -27,6 +27,10 @@ public class Account {
 	public void reduceBalance(double amount)
 	{
 		openingBalance = openingBalance - amount;
+	}
+
+	public void renameAccount(String newAccountName) {
+		this.accountName = newAccountName;
 	}
 
 	public Double getBalance()

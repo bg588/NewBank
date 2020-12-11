@@ -40,7 +40,9 @@ public class Persister {
             // create a customer object, pulling from the hashmap
             Customer customer = customers.get(customersKey);
             // add password to the line
-            line += customer.getPassword().getPassword();
+            line += customer.getPassword().getPassword() + ",";
+            // add date of birth to the line
+            line += customer.getDateOfBirth().getDateOfBirth();
             // get the list of accounts for this customer
             ArrayList<Account> accounts = customer.getAccounts();
             // then loop through them
@@ -81,7 +83,8 @@ public class Persister {
                 Customer customer = new Customer();
                 // set the password for the customer
                 customer.setPassword(results[1]);
-                for (int i = 2; i < results.length - 1; i = i + 2) {
+                customer.setDateOfBirth(results[2]);
+                for (int i = 3; i < results.length - 1; i = i + 2) {
                     // each remaining entry on this is an account/balance, add account name, and account balance to
                     // customer object
                     String accountName = results[i];

@@ -104,9 +104,43 @@ public class NewBankAccountManager {
                 "Please create account first or choose from the available accounts: %s", intendedDepositAccount, accountNames);
     }
 
-    public String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount){
+    public String withdrawFromAccount (CustomerID customer, List<String> withdrawFromAccount) {
 
-        return null;
+        if (withdrawFromAccount.size() != 3) {
+            return "Wrong Amount of args";
+        }
+
+        if (!withdrawFromAccount.get(0).equals(ProtocolsAndResponses.Protocols.WITHDRAW)) {
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+
+        if (withdrawFromAccount.get(1).equals("")) {
+            return "Account name cannot be blank";
+        }
+        double withdrawAmount;
+        try {
+            withdrawAmount = roundDouble(Double.parseDouble(withdrawFromAccount.get(2)), 2);
+        } catch (NumberFormatException ex) {
+            return " withdraw amount could not be converted to a valid number";
+        }
+        if (withdrawAmount <= 0.009) {
+            return "Cannot withdraw less than 0.01";
+        }
+        //get the current users customer object
+        Customer cust = newBank.customers.get(customer.getKey());
+        //get the current users list of accounts
+        var custAccounts = cust.getAccounts();
+        String intendedWithdrawAccount = withdrawFromAccount.get(1);
+
+        for (Account acc : custAccounts) {
+            if (acc.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
+                Double priorBal = acc.getBalance();
+                acc.reduceBalance(withdrawAmount);
+                Double newBal = priorBal - withdrawAmount;
+                return "SUCCESS\n" + "AccountName:" + acc.getAccountName() + " Withdrawn:" + withdrawAmount + " NewBalance:" + newBal;
+            }
+        }
+        return ProtocolsAndResponses.Responses.FAIL + "Cannot withdraw from an account that does not exist. Please create account first";
     }
 
     public String showMyAccounts(CustomerID customer) {
@@ -118,7 +152,7 @@ public class NewBankAccountManager {
 
     public String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
         var myName = customer.getKey();
-        if (commandWithPayeeAndAmount.size() != 3) {
+        if (commandWithPayeeAndAmount.size() != 4) {
             //not the correct amount of args
             return "Wrong Amount of args";
         }
@@ -148,6 +182,9 @@ public class NewBankAccountManager {
             //cannot pay myself
             return "Cannot pay yourself";
         }
+        //Account to pay from, note this may be empty
+        String accountToPayFrom = commandWithPayeeAndAmount.get(3);
+
         //this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
         for (String customerName: newBank.customers.keySet()) {
             //when we reach the customer we want to pay
@@ -162,18 +199,41 @@ public class NewBankAccountManager {
                 //get the current users list of accounts
                 var myAccounts = me.getAccounts();
 
+                if (accountToPayFrom.length() > 0) {
+                    //customer has specified an account they want to pay from
+                    if (me.getAccountWithName(accountToPayFrom) == null) {
+                        //account doesn't exist
+                        return ProtocolsAndResponses.Responses.FAIL + " account : " + accountToPayFrom + " doesn't exist";
+                    }
+                    //account to pay from has been specified
+                    if(me.getAccountWithName(accountToPayFrom).getBalance() >= amountToPay) {
+                        //account has enough money to pay
+                        me.getAccountWithName(accountToPayFrom).reduceBalance(amountToPay);
+                        PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
+                        return ProtocolsAndResponses.Responses.SUCCESS + " New Balance : " + accountToPayFrom +
+                                " : " + me.getAccountWithName(accountToPayFrom).getBalance().toString();
+                    }
+                    //not enough money in account
+                    return ProtocolsAndResponses.Responses.FAIL + " not enough money in account " + accountToPayFrom;
+                }
+
+                //if we get here, the customer has left account to pay from blank, so continue normal behaviour
+
                 //cycle through the user accounts to find one with enough money in it
                 for (Account account : myAccounts) {
                     if (account.getBalance() >= amountToPay) {
                         //yay this account has enough - reduce my balance and pay the person
                         account.reduceBalance(amountToPay);
                         PayeeAccounts.get(0).addMoneyToAccount(amountToPay);
+
                         return "SUCCESS\n" + "NewBalance:"+account.getAccountName()+" "+ roundDouble(Double.parseDouble(account.getBalance().toString()),2); //added to return the rounded value
+
                     }
                 }
                 break;
             }
         }
+
         Customer me = newBank.customers.get(customer.getKey());
         ArrayList<Account> allMyAccounts = me.getAccounts();
 
@@ -282,7 +342,7 @@ public class NewBankAccountManager {
         return "FAIL\n" + "Balance:"+ roundDouble(Double.parseDouble(balance),2);
     }
 
-    private static double roundDouble(double d, int places) {
+    public static double roundDouble(double d, int places) { //changed to public to use function elsewhere
         BigDecimal bigDecimal = new BigDecimal(Double.toString(d));
         bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
         return bigDecimal.doubleValue();
@@ -377,11 +437,44 @@ public class NewBankAccountManager {
             //get first account from client account list and pay loan amount into the account
             Account accountToAddMoneyInto = myAccounts.get(0);
             accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
-
-            return "SUCCESS\n" + "Your New Balance is:" + roundDouble(Double.parseDouble(accountToAddMoneyInto.getAccountName()),2) + " " + accountToAddMoneyInto.getBalance().toString() +
+            return "SUCCESS\n" + "Your New Balance is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
                     "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
 
         }
+        return ProtocolsAndResponses.Responses.FAIL;
+    }
+
+    public String renameAccount(CustomerID customer, List<String> commandWithRenameParameters) {
+
+        if (commandWithRenameParameters.size() != 3) {
+            //not the correct amount of args
+            return "Wrong Amount of args";
+        }
+        //first input in the split array is the command
+        if (!commandWithRenameParameters.get(0).equals(ProtocolsAndResponses.Protocols.RENAMEACCOUNT)) {
+            //Somehow the wrong command came in here
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+        // next inputs are old and new account names
+        String oldAccountName = commandWithRenameParameters.get(1);
+        if(oldAccountName.equals("Personal Loan")) {
+            //cannot rename the personal loan account
+            return ProtocolsAndResponses.Responses.FAIL;
+        }
+        String newAccountName = commandWithRenameParameters.get(2);
+
+        //get the current users customer object
+        Customer me = newBank.customers.get(customer.getKey());
+        ArrayList<Account> allMyAccounts = me.getAccounts();
+
+        for (Account account : allMyAccounts) {
+            if (account.getAccountName().equals(oldAccountName)) {
+                //we have found the oldAccountName. Set this to the newAccountName
+                account.renameAccount(newAccountName);
+                return ProtocolsAndResponses.Responses.SUCCESS;
+            }
+        }
+        // if we are here, the oldAccountName didn't exist, so return a fail
         return ProtocolsAndResponses.Responses.FAIL;
     }
 }
