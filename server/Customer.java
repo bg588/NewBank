@@ -14,6 +14,7 @@ public class Customer {
 	private DateOfBirth dateOfBirth;
 	private boolean locked;
 	private int passwordAttemptsRemaining;
+	private long customerNumber;
 	
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -94,6 +95,11 @@ public class Customer {
 	public DateOfBirth getDateOfBirth(){
 	return dateOfBirth;
 	}
+
+	public void setCustomerNumber(long customerNumber) {
+		this.customerNumber = customerNumber;
+	}
+	public long getCustomerNumber(){return customerNumber;}
 
 	public boolean isLocked() {
 		return locked;

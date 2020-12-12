@@ -3,6 +3,7 @@ package server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class NewBank {
 
@@ -32,6 +33,7 @@ public class NewBank {
 		bhagy.setEmail("bhagy@bath.ac.uk");
 		bhagy.setPhone("07788999000");
 		bhagy.setDateOfBirth("01-01-1990");
+		bhagy.setCustomerNumber(ThreadLocalRandom.current().nextLong(100000000, 999999999));
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
@@ -40,6 +42,7 @@ public class NewBank {
 		christina.setEmail("christina@bath.ac.uk");
 		christina.setPhone("07788999001");
 		christina.setDateOfBirth("01-01-1990");
+		christina.setCustomerNumber(ThreadLocalRandom.current().nextLong(100000000, 999999999));
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
@@ -48,6 +51,7 @@ public class NewBank {
 		john.setEmail("john@bath.ac.uk");
 		john.setPhone("07788999002");
 		john.setDateOfBirth("01-01-1990");
+		john.setCustomerNumber(ThreadLocalRandom.current().nextLong(100000000, 999999999));
 		customers.put("John", john);
 	}
 

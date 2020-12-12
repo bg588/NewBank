@@ -151,7 +151,7 @@ public class NewBankAccountManager {
         return (newBank.customers.get(customer.getKey())).accountsToString();
     }
     public String showPersonalInfo(CustomerID customer) {
-        return "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
+        return "Customer number:"+newBank.customers.get(customer.getKey()).getCustomerNumber()+ "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
     }
 
     public String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
@@ -197,7 +197,15 @@ public class NewBankAccountManager {
                 var payee = newBank.customers.get(customerName);
                 //we get the customers accounts
                 ArrayList<Account> PayeeAccounts = payee.getAccounts();
-
+                String intendedPayeeAccountName = commandWithPayeeAndAmount.get(3);
+                try {
+                    if (!intendedPayeeAccountName.equals(newBank.customers.get(customer.getKey()))) {
+                        return ProtocolsAndResponses.Responses.FAIL + " this payee " + intendedPayeeAccountName + " doesn't exist";
+                    }
+                }
+                catch (NullPointerException exception){
+                    return ProtocolsAndResponses.Responses.FAIL + " this payee " + intendedPayeeAccountName + " doesn't exist";
+                }
                 //get the current users customer object
                 var me = newBank.customers.get(customer.getKey());
                 //get the current users list of accounts

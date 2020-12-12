@@ -48,6 +48,8 @@ public class Persister {
             line += customer.getEmail() + ",";
             // addphone to the line
             line += customer.getPhone();
+            //assign customer number
+            line+=customer.getCustomerNumber();
             // get the list of accounts for this customer
             ArrayList<Account> accounts = customer.getAccounts();
             // then loop through them
