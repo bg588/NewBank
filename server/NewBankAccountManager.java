@@ -436,7 +436,8 @@ public class NewBankAccountManager {
                     loanAccount.reduceBalance(amountToBorrow);
                     accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
                     return "SUCCESS\n" + "Your New Credit Balance including existing loan is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
-                            "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2)+" And repayment is:"+newMonthlyRepayment;
+                            "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
+                    //+" And repayment is:"+newMonthlyRepayment;//this is used for testing
 
                 } else{
                     return "FAIL\n" + "Your New Balance would exceed overall affordability - you new loan application has been rejected";
@@ -449,7 +450,8 @@ public class NewBankAccountManager {
                 //get first account from client account list and pay loan amount into the account
                 accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
                 return "SUCCESS\n" + "Your New Balance is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
-                        "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2)+"Monthly repayment is : "+monthlyRepayment;
+                        "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
+                //+"Monthly repayment is : "+monthlyRepayment; this is used for testing
 
             }
         }else {
