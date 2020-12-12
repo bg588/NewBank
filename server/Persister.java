@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+
 /*
 * This is used to get and set data in a CSV file called data.csv which is stored on the classpath
 * setPersistedData is called at present during Exit, and will save all data to CSV
@@ -54,6 +55,7 @@ public class Persister {
                 // for each account for this customer, add account name and balance to the line
                 line += "," + account.getAccountName() + ",";
                 line += account.getBalance();
+                line += account.getAccountNumber();
             }
             // all accounts are done, add this line to array to be written
             linesToWrite.add(line);
@@ -95,7 +97,9 @@ public class Persister {
                     // customer object
                     String accountName = results[i];
                     double balance = Double.parseDouble(results[i+1]);
-                    customer.addAccount(new Account(accountName,balance));
+                    long accountNumber=Long.parseLong(results[i+1]);
+
+                    customer.addAccount(new Account(accountName,balance,accountNumber));
                     //then increment the loop by 2
                 }
                 // populate the data HashMap with this customer's details

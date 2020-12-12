@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class NewBankAccountManager {
     private NewBank newBank;
@@ -49,10 +50,13 @@ public class NewBankAccountManager {
                 return "There is already an existing account";
             }
         }
-        Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit);
+        long accountNumber=ThreadLocalRandom.current().nextLong(100000000, 999999999);
+
+        Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit,accountNumber);
         myCurrentCustomer.addAccount(theNewAccount);
 
-        return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
+
+        return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+"Account Number"+theNewAccount.getAccountNumber()+"  "+ "InitialDepositAmount:"+theNewAccount.getBalance().toString();
     }
 
     public String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
@@ -239,7 +243,7 @@ public class NewBankAccountManager {
 
         ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
         for (Account myAccount : allMyAccounts) {
-            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance(),myAccount.getAccountNumber()));
         }
         StringBuffer sb = new StringBuffer();
         for(Account eachItemInArray:listOfMyAccountsAndBalance){
@@ -331,7 +335,7 @@ public class NewBankAccountManager {
 
         ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
         for (Account myAccount : allMyAccounts) {
-            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance(),myAccount.getAccountNumber()));
         }
         StringBuffer sb = new StringBuffer();
         for(Account eachItemInArray:listOfMyAccountsAndBalance){
@@ -430,7 +434,7 @@ public class NewBankAccountManager {
                 loanAccount.reduceBalance(amountToBorrow);
             } else {
                 //a loan account doesn't exist yet, so create one
-                loanAccount = new Account("Personal Loan", -amountToBorrow);
+                loanAccount = new Account("Personal Loan", -amountToBorrow,loanAccount.getAccountNumber());
                 me.addAccount(loanAccount);
             }
 
