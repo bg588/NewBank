@@ -144,7 +144,14 @@ public class NewBankAccountManager {
     }
 
     public String showMyAccounts(CustomerID customer) {
-        return (newBank.customers.get(customer.getKey())).accountsToString();
+
+        String temp =  (newBank.customers.get(customer.getKey())).accountsToString();
+
+        if (temp.isBlank()){
+            return ("You have no accounts available to show\nOpen a new account using menu option 1");}
+        else {
+            return(temp);
+        }
     }
     public String showPersonalInfo(CustomerID customer) {
         return "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
