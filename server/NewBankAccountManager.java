@@ -453,7 +453,7 @@ public class NewBankAccountManager {
 
             }
         }else {
-            return "FAIL\n" + "Your new loan balance would exceed overall affordability - your new loan has been rejected";
+            return "Sorry, we have not been able to approve your loan at this time. \nYour new loan balance would exceed overall affordability. \nPlease call us on 01225 383214 if you would like to discuss this further.";
         }
     }
 
