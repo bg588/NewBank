@@ -441,7 +441,8 @@ public class NewBankAccountManager {
                     "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
 
         }
-        return ProtocolsAndResponses.Responses.FAIL;
+        return "Sorry, we have not been able to approve your loan at this time\nPlease call us on 01225 383214 if you would like to discuss this further";
+        //ProtocolsAndResponses.Responses.FAIL;
     }
 
     public String renameAccount(CustomerID customer, List<String> commandWithRenameParameters) {
