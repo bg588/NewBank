@@ -189,18 +189,18 @@ public class NewBankAccountManager {
         //Account to pay from, note this may be empty
         String accountToPayFrom = commandWithPayeeAndAmount.get(3);
 
-        //this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
-        for (String customerName: newBank.customers.keySet()) {
-            //when we reach the customer we want to pay
-            if (personOrCompanyToPay.equalsIgnoreCase(customerName)) {
-                //we pull out the customer object based on the name we matched above
-                var payee = newBank.customers.get(customerName);
-                //we get the customers accounts
-                ArrayList<Account> PayeeAccounts = payee.getAccounts();
-                String intendedPayeeAccountName = commandWithPayeeAndAmount.get(3);
-                try {
-                    if (!intendedPayeeAccountName.equals(newBank.customers.get(customer.getKey()))) {
-                        return ProtocolsAndResponses.Responses.FAIL + " this payee " + intendedPayeeAccountName + " doesn't exist";
+            //this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
+            for (String customerName : newBank.customers.keySet()) {
+                //when we reach the customer we want to pay
+                if (personOrCompanyToPay.equalsIgnoreCase(customerName)) {
+                    //we pull out the customer object based on the name we matched above
+                    var payee = newBank.customers.get(customerName);
+                    //we get the customers accounts
+                    ArrayList<Account> PayeeAccounts = payee.getAccounts();
+                    String intendedPayeeAccountName = commandWithPayeeAndAmount.get(3);
+
+                    if (!personOrCompanyToPay.equals(customerName)) {
+                        return  ProtocolsAndResponses.Responses.FAIL +"Payee"+payee+"doesn't exist";
                     }
                 }
                 catch (NullPointerException exception){
