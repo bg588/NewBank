@@ -20,7 +20,7 @@ public class Account {
 	public long getAccountNumber(){ return accountNumber; }
 
 	public String toString() {
-		return (accountName + " " + NewBankAccountManager.roundDouble(openingBalance,2));
+		return (accountName + " (" + accountNumber + "). Balance : " + NewBankAccountManager.roundDouble(openingBalance,2));
 	}
 
 	public void addMoneyToAccount(double amount)

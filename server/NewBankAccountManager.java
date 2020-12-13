@@ -56,7 +56,8 @@ public class NewBankAccountManager {
         myCurrentCustomer.addAccount(theNewAccount);
 
 
-        return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+"Account Number"+theNewAccount.getAccountNumber()+"  "+ "InitialDepositAmount:"+theNewAccount.getBalance().toString();
+        return "SUCCESS\n" + "New Account Name: " + theNewAccount.getAccountName() + "\nAccount Number: "+
+                theNewAccount.getAccountNumber() + "\nInitial Deposit Amount: " + theNewAccount.getBalance().toString();
     }
 
     public String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
