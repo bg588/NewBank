@@ -189,6 +189,23 @@ public class NewBankAccountManager {
         //Account to pay from, note this may be empty
         String accountToPayFrom = commandWithPayeeAndAmount.get(3);
 
+        //Now check if the payee that we are sending money to exists
+        boolean validPayee = false;
+        for (Object entry : newBank.customers.keySet().toArray()) {
+            //bit messy, but as we need to ignore case we do this instead of checking if the keyset contains a string
+            String validCustomer = entry.toString();
+            if (validCustomer.equalsIgnoreCase(personOrCompanyToPay)) {
+                //the payee exists, so we can break and set validPayee to true
+                validPayee = true;
+                break;
+            }
+        }
+
+        if (!validPayee) {
+            //if valid payee is still false, the customer doesn't have an account here
+            return "Payee is not valid, " + personOrCompanyToPay + " does not have an account here";
+        }
+
             //this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
             for (String customerName : newBank.customers.keySet()) {
                 //when we reach the customer we want to pay
@@ -197,15 +214,7 @@ public class NewBankAccountManager {
                     var payee = newBank.customers.get(customerName);
                     //we get the customers accounts
                     ArrayList<Account> PayeeAccounts = payee.getAccounts();
-                    String intendedPayeeAccountName = commandWithPayeeAndAmount.get(3);
 
-                    if (!personOrCompanyToPay.equals(customerName)) {
-                        return  ProtocolsAndResponses.Responses.FAIL +"Payee"+payee+"doesn't exist";
-                    }
-                }
-                catch (NullPointerException exception){
-                    return ProtocolsAndResponses.Responses.FAIL + " this payee " + intendedPayeeAccountName + " doesn't exist";
-                }
                 //get the current users customer object
                 var me = newBank.customers.get(customer.getKey());
                 //get the current users list of accounts
