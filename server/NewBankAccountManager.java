@@ -431,25 +431,39 @@ public class NewBankAccountManager {
             ArrayList<Account> myAccounts = me.getAccounts();
 
             Account loanAccount = me.getAccountWithName("Personal Loan");
+            Account accountToAddMoneyInto = myAccounts.get(0);
 
             if (loanAccount != null) {
                 //a loan account exists already, so update that
-                loanAccount.reduceBalance(amountToBorrow);
+                double newAmountToBorrow = -(loanAccount.getBalance()-amountToBorrow);
+                double newMonthlyRepayment = newAmountToBorrow * (overallInterestPerMonth * (Math.pow(1 + overallInterestPerMonth,loanTerm)))/
+                        (Math.pow(1 + overallInterestPerMonth,loanTerm) - 1);
+                if (newMonthlyRepayment <= affordability) {
+                    //get the current users list of accounts
+                    loanAccount.reduceBalance(amountToBorrow);
+                    accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
+                    return "SUCCESS\n" + "Your New Credit Balance including existing loan is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
+                            "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
+                    //+" And repayment is:"+newMonthlyRepayment;//this is used for testing
+
+                } else{
+                    return "FAIL\n" + "Your New Balance would exceed overall affordability - you new loan application has been rejected";
+                }
             } else {
                 //a loan account doesn't exist yet, so create one
                 loanAccount = new Account("Personal Loan", -amountToBorrow);
                 me.addAccount(loanAccount);
+
+                //get first account from client account list and pay loan amount into the account
+                accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
+                return "SUCCESS\n" + "Your New Balance is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
+                        "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
+                //+"Monthly repayment is : "+monthlyRepayment; this is used for testing
+
             }
-
-            //get first account from client account list and pay loan amount into the account
-            Account accountToAddMoneyInto = myAccounts.get(0);
-            accountToAddMoneyInto.addMoneyToAccount(amountToBorrow);
-            return "SUCCESS\n" + "Your New Balance is: " + accountToAddMoneyInto.getAccountName() + " " + accountToAddMoneyInto.getBalance() +
-                    "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
-
+        } else {
+            return "Sorry, we have not been able to approve your loan at this time. \nYour new loan balance would exceed overall affordability. \nPlease call us on 01225 383214 if you would like to discuss this further.";
         }
-        return "Sorry, we have not been able to approve your loan at this time\nPlease call us on 01225 383214 if you would like to discuss this further";
-        //ProtocolsAndResponses.Responses.FAIL;
     }
 
     public String renameAccount(CustomerID customer, List<String> commandWithRenameParameters) {
