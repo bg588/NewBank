@@ -257,18 +257,8 @@ public class NewBankAccountManager {
 
         Customer me = newBank.customers.get(customer.getKey());
         ArrayList<Account> allMyAccounts = me.getAccounts();
-
-        ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
-        for (Account myAccount : allMyAccounts) {
-            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance(),myAccount.getAccountNumber()));
-        }
-        StringBuffer sb = new StringBuffer();
-        for(Account eachItemInArray:listOfMyAccountsAndBalance){
-            sb.append(eachItemInArray);
-            sb.append(" ");
-        }
-        String balance = sb.toString();
-        return "FAIL\n" + "Balance:"+ roundDouble(Double.parseDouble(balance),2); //added to return rounded value
+        // We reach this point if we haven't specified an account and no account has enough balance to make payment
+        return "Not enough in any account. Your accounts are as follows : " + allMyAccounts;
     }
 
     public String moveAnAmountFromOneAccountToAnother(CustomerID customer,
