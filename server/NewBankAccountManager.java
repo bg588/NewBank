@@ -158,7 +158,10 @@ public class NewBankAccountManager {
         return (newBank.customers.get(customer.getKey())).accountsToString();
     }
     public String showPersonalInfo(CustomerID customer) {
-        return "Customer number:"+newBank.customers.get(customer.getKey()).getCustomerNumber()+ "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
+        Customer me = newBank.customers.get(customer.getKey());
+        return "Customer number: " + me.getCustomerNumber() + "\n" +
+                "Email: " + me.getEmail() + "\n" +
+                "Phone: " + me.getPhone();
     }
 
     public String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
