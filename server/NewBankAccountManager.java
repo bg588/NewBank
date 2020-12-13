@@ -134,18 +134,24 @@ public class NewBankAccountManager {
         //get the current users customer object
         Customer cust = newBank.customers.get(customer.getKey());
         //get the current users list of accounts
-        var custAccounts = cust.getAccounts();
         String intendedWithdrawAccount = withdrawFromAccount.get(1);
 
-        for (Account acc : custAccounts) {
-            if (acc.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
-                Double priorBal = acc.getBalance();
-                acc.reduceBalance(withdrawAmount);
-                Double newBal = priorBal - withdrawAmount;
-                return "SUCCESS\n" + "AccountName:" + acc.getAccountName() + " Withdrawn:" + withdrawAmount + " NewBalance:" + newBal;
+        if (cust.getAccountWithName(intendedWithdrawAccount) == null) {
+            //account doesn't exist
+            return ProtocolsAndResponses.Responses.FAIL + "\nCannot withdraw from an account that does not exist.";
+        } else {
+            Account withdrawAccount = cust.getAccountWithName(intendedWithdrawAccount);
+            if (withdrawAccount.getBalance() >= withdrawAmount) {
+                //we have enough in account to withdraw
+                withdrawAccount.reduceBalance(withdrawAmount);
+                return "SUCCESS\n" + "AccountName:" + withdrawAccount.getAccountName() + " Withdrawn:" + withdrawAmount +
+                        " NewBalance:" + withdrawAccount.getBalance();
+            } else {
+                //not enough in account to withdraw
+                return ProtocolsAndResponses.Responses.FAIL + ". You only have " + withdrawAccount.getBalance() +
+                        " in account " + withdrawAccount.getAccountName();
             }
         }
-        return ProtocolsAndResponses.Responses.FAIL + "Cannot withdraw from an account that does not exist. Please create account first";
     }
 
     public String showMyAccounts(CustomerID customer) {
