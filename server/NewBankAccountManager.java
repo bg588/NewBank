@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class NewBankAccountManager {
     private NewBank newBank;
@@ -49,10 +50,14 @@ public class NewBankAccountManager {
                 return "There is already an existing account";
             }
         }
-        Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit);
+        long accountNumber = ThreadLocalRandom.current().nextLong(100000000, 999999999);
+
+        Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit, accountNumber);
         myCurrentCustomer.addAccount(theNewAccount);
 
-        return "SUCCESS\n" + "NewAccountName:"+theNewAccount.getAccountName()+" InitialDepositAmount:"+theNewAccount.getBalance().toString();
+
+        return "SUCCESS\n" + "New Account Name: " + theNewAccount.getAccountName() + "\nAccount Number: "+
+                theNewAccount.getAccountNumber() + "\nInitial Deposit Amount: " + theNewAccount.getBalance().toString();
     }
 
     public String depositToExistingAccount(CustomerID customer, List<String> commandWithExistingAccountNameAndDepositAmount) {
@@ -129,18 +134,24 @@ public class NewBankAccountManager {
         //get the current users customer object
         Customer cust = newBank.customers.get(customer.getKey());
         //get the current users list of accounts
-        var custAccounts = cust.getAccounts();
         String intendedWithdrawAccount = withdrawFromAccount.get(1);
 
-        for (Account acc : custAccounts) {
-            if (acc.getAccountName().equalsIgnoreCase(intendedWithdrawAccount)) {
-                Double priorBal = acc.getBalance();
-                acc.reduceBalance(withdrawAmount);
-                Double newBal = priorBal - withdrawAmount;
-                return "SUCCESS\n" + "AccountName:" + acc.getAccountName() + " Withdrawn:" + withdrawAmount + " NewBalance:" + newBal;
+        if (cust.getAccountWithName(intendedWithdrawAccount) == null) {
+            //account doesn't exist
+            return ProtocolsAndResponses.Responses.FAIL + "\nCannot withdraw from an account that does not exist.";
+        } else {
+            Account withdrawAccount = cust.getAccountWithName(intendedWithdrawAccount);
+            if (withdrawAccount.getBalance() >= withdrawAmount) {
+                //we have enough in account to withdraw
+                withdrawAccount.reduceBalance(withdrawAmount);
+                return "SUCCESS\n" + "AccountName:" + withdrawAccount.getAccountName() + " Withdrawn:" + withdrawAmount +
+                        " NewBalance:" + withdrawAccount.getBalance();
+            } else {
+                //not enough in account to withdraw
+                return ProtocolsAndResponses.Responses.FAIL + ". You only have " + withdrawAccount.getBalance() +
+                        " in account " + withdrawAccount.getAccountName();
             }
         }
-        return ProtocolsAndResponses.Responses.FAIL + "Cannot withdraw from an account that does not exist. Please create account first";
     }
 
     public String showMyAccounts(CustomerID customer) {
@@ -154,7 +165,10 @@ public class NewBankAccountManager {
         }
     }
     public String showPersonalInfo(CustomerID customer) {
-        return "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
+        Customer me = newBank.customers.get(customer.getKey());
+        return "Customer number: " + me.getCustomerNumber() + "\n" +
+                "Email: " + me.getEmail() + "\n" +
+                "Phone: " + me.getPhone();
     }
 
     public String payPersonOrCompanyAnAmount(CustomerID customer, List<String> commandWithPayeeAndAmount) {
@@ -192,14 +206,31 @@ public class NewBankAccountManager {
         //Account to pay from, note this may be empty
         String accountToPayFrom = commandWithPayeeAndAmount.get(3);
 
-        //this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
-        for (String customerName: newBank.customers.keySet()) {
-            //when we reach the customer we want to pay
-            if (personOrCompanyToPay.equalsIgnoreCase(customerName)) {
-                //we pull out the customer object based on the name we matched above
-                var payee = newBank.customers.get(customerName);
-                //we get the customers accounts
-                ArrayList<Account> PayeeAccounts = payee.getAccounts();
+        //Now check if the payee that we are sending money to exists
+        boolean validPayee = false;
+        for (Object entry : newBank.customers.keySet().toArray()) {
+            //bit messy, but as we need to ignore case we do this instead of checking if the keyset contains a string
+            String validCustomer = entry.toString();
+            if (validCustomer.equalsIgnoreCase(personOrCompanyToPay)) {
+                //the payee exists, so we can break and set validPayee to true
+                validPayee = true;
+                break;
+            }
+        }
+
+        if (!validPayee) {
+            //if valid payee is still false, the customer doesn't have an account here
+            return "Payee is not valid, " + personOrCompanyToPay + " does not have an account here";
+        }
+
+            //this is a for-each loop that will cycle through the customer keys (which are the names of the accounts)
+            for (String customerName : newBank.customers.keySet()) {
+                //when we reach the customer we want to pay
+                if (personOrCompanyToPay.equalsIgnoreCase(customerName)) {
+                    //we pull out the customer object based on the name we matched above
+                    var payee = newBank.customers.get(customerName);
+                    //we get the customers accounts
+                    ArrayList<Account> PayeeAccounts = payee.getAccounts();
 
                 //get the current users customer object
                 var me = newBank.customers.get(customer.getKey());
@@ -243,18 +274,8 @@ public class NewBankAccountManager {
 
         Customer me = newBank.customers.get(customer.getKey());
         ArrayList<Account> allMyAccounts = me.getAccounts();
-
-        ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
-        for (Account myAccount : allMyAccounts) {
-            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
-        }
-        StringBuffer sb = new StringBuffer();
-        for(Account eachItemInArray:listOfMyAccountsAndBalance){
-            sb.append(eachItemInArray);
-            sb.append(" ");
-        }
-        String balance = sb.toString();
-        return "FAIL\n" + "Balance:"+ roundDouble(Double.parseDouble(balance),2); //added to return rounded value
+        // We reach this point if we haven't specified an account and no account has enough balance to make payment
+        return "Not enough in any account. Your accounts are as follows : " + allMyAccounts;
     }
 
     public String moveAnAmountFromOneAccountToAnother(CustomerID customer,
@@ -338,7 +359,7 @@ public class NewBankAccountManager {
 
         ArrayList<Account> listOfMyAccountsAndBalance = new ArrayList<Account>();
         for (Account myAccount : allMyAccounts) {
-            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance()));
+            listOfMyAccountsAndBalance.add(new Account(myAccount.getAccountName(), myAccount.getBalance(),myAccount.getAccountNumber()));
         }
         StringBuffer sb = new StringBuffer();
         for(Account eachItemInArray:listOfMyAccountsAndBalance){
@@ -451,7 +472,7 @@ public class NewBankAccountManager {
                 }
             } else {
                 //a loan account doesn't exist yet, so create one
-                loanAccount = new Account("Personal Loan", -amountToBorrow);
+                loanAccount = new Account("Personal Loan", -amountToBorrow,loanAccount.getAccountNumber());
                 me.addAccount(loanAccount);
 
                 //get first account from client account list and pay loan amount into the account

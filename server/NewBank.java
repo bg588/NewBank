@@ -27,27 +27,30 @@ public class NewBank {
 
 	private void addTestData() {
 		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Main", 1000.0,6512436743L));
 		bhagy.setPassword("password");
 		bhagy.setEmail("bhagy@bath.ac.uk");
 		bhagy.setPhone("07788999000");
 		bhagy.setDateOfBirth("01-01-1990");
+		bhagy.setCustomerNumber(1);
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
+		christina.addAccount(new Account("Savings", 1500.0,6512436786L));
 		christina.setPassword("password");
 		christina.setEmail("christina@bath.ac.uk");
 		christina.setPhone("07788999001");
 		christina.setDateOfBirth("01-01-1990");
+		christina.setCustomerNumber(2);
 		customers.put("Christina", christina);
 
 		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
+		john.addAccount(new Account("Checking", 250.0,6512436745L));
 		john.setPassword("password");
 		john.setEmail("john@bath.ac.uk");
 		john.setPhone("07788999002");
 		john.setDateOfBirth("01-01-1990");
+		john.setCustomerNumber(3);
 		customers.put("John", john);
 	}
 

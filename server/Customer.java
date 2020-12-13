@@ -14,6 +14,7 @@ public class Customer {
 	private DateOfBirth dateOfBirth;
 	private boolean locked;
 	private int passwordAttemptsRemaining;
+	private Integer customerNumber;
 	
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -26,7 +27,7 @@ public class Customer {
 	public String accountsToString() {
 		String s = "";
 		for(Account a : accounts) {
-			s += a.toString()+" ";
+			s += a.toString() + "\n";
 		}
 		return s;
 	}
@@ -66,11 +67,6 @@ public class Customer {
 		return phone;
 	}
 
-	//not in use at the moment
-/*	public void removeAccount(Account account) {
-		accounts.remove(account);
-	}*/
-
 	public void setPassword(String password) {
 		this.password.setPassword(password);
 	}
@@ -94,6 +90,12 @@ public class Customer {
 	public DateOfBirth getDateOfBirth(){
 	return dateOfBirth;
 	}
+
+	public void setCustomerNumber(Integer customerNumber) {
+		this.customerNumber = customerNumber;
+	}
+
+	public Integer getCustomerNumber(){return customerNumber;}
 
 	public boolean isLocked() {
 		return locked;
