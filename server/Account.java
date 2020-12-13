@@ -6,7 +6,7 @@ public class Account {
 	private double openingBalance;
 	private long accountNumber;
 
-	public Account(String accountName, double openingBalance,long accountNumber) {
+	public Account(String accountName, double openingBalance, long accountNumber) {
 		this.accountName = accountName;
 		this.openingBalance = openingBalance;
 		this.accountNumber= accountNumber;

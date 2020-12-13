@@ -50,9 +50,9 @@ public class NewBankAccountManager {
                 return "There is already an existing account";
             }
         }
-        long accountNumber=ThreadLocalRandom.current().nextLong(100000000, 999999999);
+        long accountNumber = ThreadLocalRandom.current().nextLong(100000000, 999999999);
 
-        Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit,accountNumber);
+        Account theNewAccount = new Account(commandWithAccountNameAndDepositAmount.get(1), amountToDeposit, accountNumber);
         myCurrentCustomer.addAccount(theNewAccount);
 
 

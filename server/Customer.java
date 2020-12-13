@@ -14,7 +14,7 @@ public class Customer {
 	private DateOfBirth dateOfBirth;
 	private boolean locked;
 	private int passwordAttemptsRemaining;
-	private long customerNumber;
+	private Integer customerNumber;
 	
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -67,11 +67,6 @@ public class Customer {
 		return phone;
 	}
 
-	//not in use at the moment
-/*	public void removeAccount(Account account) {
-		accounts.remove(account);
-	}*/
-
 	public void setPassword(String password) {
 		this.password.setPassword(password);
 	}
@@ -96,10 +91,11 @@ public class Customer {
 	return dateOfBirth;
 	}
 
-	public void setCustomerNumber(long customerNumber) {
+	public void setCustomerNumber(Integer customerNumber) {
 		this.customerNumber = customerNumber;
 	}
-	public long getCustomerNumber(){return customerNumber;}
+
+	public Integer getCustomerNumber(){return customerNumber;}
 
 	public boolean isLocked() {
 		return locked;

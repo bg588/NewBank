@@ -47,7 +47,7 @@ public class Persister {
             // add email to the line
             line += customer.getEmail() + ",";
             // addphone to the line
-            line += customer.getPhone();
+            line += customer.getPhone() + ",";
             //assign customer number
             line+=customer.getCustomerNumber();
             // get the list of accounts for this customer
@@ -56,7 +56,7 @@ public class Persister {
             for (Account account : accounts) {
                 // for each account for this customer, add account name and balance to the line
                 line += "," + account.getAccountName() + ",";
-                line += account.getBalance();
+                line += account.getBalance() + ",";
                 line += account.getAccountNumber();
             }
             // all accounts are done, add this line to array to be written
@@ -94,14 +94,14 @@ public class Persister {
                 customer.setDateOfBirth(results[2]);
                 customer.setEmail(results[3]);
                 customer.setPhone(results[4]);
-                for (int i = 5; i < results.length - 1; i = i + 2) {
+                customer.setCustomerNumber(Integer.parseInt(results[5]));
+                for (int i = 6; i < results.length - 1; i = i + 3) {
                     // each remaining entry on this is an account/balance, add account name, and account balance to
                     // customer object
                     String accountName = results[i];
                     double balance = Double.parseDouble(results[i+1]);
-                    long accountNumber=Long.parseLong(results[i+1]);
-
-                    customer.addAccount(new Account(accountName,balance,accountNumber));
+                    long accountNumber = Long.parseLong(results[i+2]);
+                    customer.addAccount(new Account(accountName, balance, accountNumber));
                     //then increment the loop by 2
                 }
                 // populate the data HashMap with this customer's details
