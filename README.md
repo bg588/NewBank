@@ -60,19 +60,31 @@ Returns SUCEESS or FAIL depending on affordability
 In case of SUCCESS
 New Blaance: Checking 10250, Personal Loan -10000
 
-8.Change Password
+8.Rename Account
+<Existing Account name><New account name>
+Success or Fail
+In case of Success
+<New Account Name (Account Number)>.<Balance: xxx,x>
+
+9.Check Personal Details
+Shows personal information registered with bank
+Customer number:x
+Email:xxx@xxx
+Phone:xxxxxxxxxxx
+
+10.Change Password
 Customer can change password using below criteria:
 At least 8 characters with 1 capital and 1 non-number/alphabet character.
 It will return SUCCESS or FAIL.
 On a returned FAIL it will reiterate the requirements for a valid password
 
-9. Close Account
+11. Close Account
 Close <accountToClose>
 SUCCESS OR FAIL depending on account balance
 If the account balance is zero it should close, otherwise it would show message that customer needs to withdraw it first.
 
-10.EXIT
+12.EXIT
 This will exit you out of ExampleClient but stay connected to NewBankServer
 
-11.LOGOUT
+13.LOGOUT
 This will bring you back to pre-log in dialogue
