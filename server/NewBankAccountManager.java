@@ -144,7 +144,14 @@ public class NewBankAccountManager {
     }
 
     public String showMyAccounts(CustomerID customer) {
-        return (newBank.customers.get(customer.getKey())).accountsToString();
+
+        String temp =  (newBank.customers.get(customer.getKey())).accountsToString();
+
+        if (temp.isBlank()){
+            return ("You have no accounts available to show\nOpen a new account using menu option 1");}
+        else {
+            return(temp);
+        }
     }
     public String showPersonalInfo(CustomerID customer) {
         return "email:"+(newBank.customers.get(customer.getKey())).getEmail()+"\n"+"phone:"+(newBank.customers.get(customer.getKey())).getPhone();
@@ -441,7 +448,8 @@ public class NewBankAccountManager {
                     "\nAnd your new balance of loan account is:" + roundDouble(Double.parseDouble(loanAccount.getBalance().toString()),2);
 
         }
-        return ProtocolsAndResponses.Responses.FAIL;
+        return "Sorry, we have not been able to approve your loan at this time\nPlease call us on 01225 383214 if you would like to discuss this further";
+        //ProtocolsAndResponses.Responses.FAIL;
     }
 
     public String renameAccount(CustomerID customer, List<String> commandWithRenameParameters) {
